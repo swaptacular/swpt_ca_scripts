@@ -7,12 +7,10 @@ touch db/index
 set -e
 
 if [ ! -s db/serial ]; then
-    echo "Creating db/serial..."
     openssl rand -hex 16  > db/serial
 fi
 
 if [ ! -s db/crlnumber ]; then
-    echo "Creating db/crlnumber..."
     echo 1001 > db/crlnumber
 fi
 
@@ -22,7 +20,8 @@ if [ ! -s private/root-ca.key ]; then
     openssl req -new \
             -config root-ca.conf \
             -out root-ca.csr \
-            -keyout private/root-ca.key
+            -keyout private/root-ca.key \
+            -reqexts ca_ext
 fi
 
 if [ ! -s root-ca.crt ]; then
@@ -32,4 +31,13 @@ if [ ! -s root-ca.crt ]; then
             -in root-ca.csr \
             -out root-ca.crt \
             -extensions ca_ext
+fi
+
+if [ -s root-ca.crt ]; then
+    echo "Creating official certificate signing request..."
+    openssl req -new \
+            -config root-ca.conf \
+            -out root-ca.csr \
+            -key private/root-ca.key \
+            -reqexts ca_ext_official
 fi
