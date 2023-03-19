@@ -1,22 +1,35 @@
 #!/bin/bash
-set -e
 
-echo "Initialising the root CA database..."
-mkdir certs db private
+mkdir certs db private 2> /dev/null
 chmod 700 private
 touch db/index
-openssl rand -hex 16  > db/serial
-echo 1001 > db/crlnumber
 
-echo "Creating a private key for the root CA..."
-openssl req -new \
-    -config root-ca.conf \
-    -out root-ca.csr \
-    -keyout private/root-ca.key
+set -e
 
-echo "Creating a self-signed certificate for the root CA..."
-openssl ca -selfsign \
-    -config root-ca.conf \
-    -in root-ca.csr \
-    -out root-ca.crt \
-    -extensions ca_ext
+if [ ! -s db/serial ]; then
+    echo "Creating db/serial..."
+    openssl rand -hex 16  > db/serial
+fi
+
+if [ ! -s db/crlnumber ]; then
+    echo "Creating db/crlnumber..."
+    echo 1001 > db/crlnumber
+fi
+
+sed -i "s/Put your generated hexadecimal uuid here./$(uuidgen)/" root-ca.conf
+
+if [ ! -s private/root-ca.key ]; then
+    openssl req -new \
+            -config root-ca.conf \
+            -out root-ca.csr \
+            -keyout private/root-ca.key
+fi
+
+if [ ! -s root-ca.crt ]; then
+    echo "Creating a self-signed certificate for the root CA..."
+    openssl ca -selfsign \
+            -config root-ca.conf \
+            -in root-ca.csr \
+            -out root-ca.crt \
+            -extensions ca_ext
+fi
