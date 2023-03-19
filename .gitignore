@@ -131,6 +131,9 @@ dmypy.json
 # direnv subdir
 .direnv/
 
+# The directory that contains private keys
+private/
+
 # Emacs files
 TAGS
 *~

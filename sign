@@ -1,0 +1,14 @@
+#!/bin/bash
+set -e
+
+CSR="$1"
+CRT=$(echo "$CSR" | sed s/\.csr$//).crt
+
+export SERIAL_NUMBER=$(openssl req -noout -subject -in "$CSR" | \
+    grep -Po '(?<=serialNumber = )[a-f0-9-]+')
+
+openssl ca \
+    -config root-ca.conf \
+    -in "$CSR" \
+    -out "$CRT" \
+    -extensions sub_ca_ext
