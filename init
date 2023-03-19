@@ -16,7 +16,7 @@ if [ ! -s db/crlnumber ]; then
     echo 1001 > db/crlnumber
 fi
 
-sed -i "s/Put your generated hexadecimal uuid here./$(uuidgen)/" root-ca.conf
+sed -i "s/Put your generated hexadecimal UUID here./$(uuidgen)/" root-ca.conf
 
 if [ ! -s private/root-ca.key ]; then
     openssl req -new \
