@@ -83,7 +83,7 @@ if [ ! -s root-ca.crt ]; then
 fi
 
 if [ -s root-ca.crt ]; then
-    echo "Creating official certificate signing request..."
+    echo "Creating an official certificate signing request..."
     openssl req -new \
             -config root-ca.conf \
             -out root-ca.csr \
