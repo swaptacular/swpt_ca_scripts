@@ -21,6 +21,11 @@ export DN_SERIAL_NUMBER=$(echo "$DN" | grep -Po '(?<=\bserialNumber = )[a-f0-9-]
 approved_csr_file="approved-requests/$DN_SERIAL_NUMBER.csr"
 
 if [ -s "$approved_csr_file" ]; then
+    # TODO: Consider allowing the creation of a new certificate, in case the
+    # node's public key in the old, already approved CSR (Certificate
+    # Signing Request) is the same as the public key in the new CSR. This
+    # would allow for the easy renewal of expiring certificates. Although,
+    # this is not a problem when we use "eternal" certificates.
     if ! cmp "$csr_file" "$approved_csr_file" 2> /dev/null; then
         echo
         echo 'ERROR: A certificate signing request from the same Swaptacular'
