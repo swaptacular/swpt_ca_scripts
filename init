@@ -1,5 +1,11 @@
 #!/bin/bash
 
+generate_conf_file() {
+    envsubst '$ORGANIZATIONAL_UNIT_NAME $SERIAL_NUMBER' \
+             < root-ca.conf.template \
+             > root-ca.conf
+}
+
 mkdir certs db private 2> /dev/null
 chmod 700 private
 touch db/index
@@ -14,9 +20,37 @@ if [ ! -s db/crlnumber ]; then
     echo 1001 > db/crlnumber
 fi
 
-sed -i "s/Put your generated hexadecimal UUID here./$(uuidgen)/" root-ca.conf
+if [ ! -s root-ca.conf ]; then
+    PS3="Specify the type of your Swaptacular node: "
+    select opt in "Creditors agent" "Debtors agent" "Accounting authority"
+    do
+        case $opt in
+            "Creditors agent")
+                export ORGANIZATIONAL_UNIT_NAME="Creditors Agents"
+                export SERIAL_NUMBER=$(uuidgen)
+                generate_conf_file
+                break
+                ;;
+            "Debtors agent")
+                export ORGANIZATIONAL_UNIT_NAME="Debtors Agents"
+                export SERIAL_NUMBER=$(uuidgen)
+                generate_conf_file
+                break
+                ;;
+            "Accounting authority")
+                export ORGANIZATIONAL_UNIT_NAME="Accounting Authorities"
+                export SERIAL_NUMBER=$(uuidgen)
+                generate_conf_file
+                break
+                ;;
+            *)
+                echo "Invalid option $REPLY"
+                ;;
+        esac
+    done
+fi
 
-if [ ! -s private/root-ca.key ]; then
+if [ ! -s private/root-ca.key -o ! -s root-ca.csr ]; then
     openssl req -new \
             -config root-ca.conf \
             -out root-ca.csr \

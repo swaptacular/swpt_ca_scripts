@@ -2,11 +2,17 @@
 name                    = root-ca
 default_ca              = ca_default
 name_opt                = utf8,esc_ctrl,multiline,lname,align
+DN_O                    =
+DN_OU                   =
 DN_SERIAL_NUMBER        =
+dn_org                  = $ENV::DN_O
+dn_orgunit              = $ENV::DN_OU
 dn_serialnum            = $ENV::DN_SERIAL_NUMBER
 
 [ca_dn]
-serialNumber            = "Put your generated hexadecimal UUID here."
+organizationName        = "Swaptacular Nodes"
+organizationalUnitName  = "$ORGANIZATIONAL_UNIT_NAME"
+serialNumber            = "$SERIAL_NUMBER"
 
 [ca_default]
 home                    = .
@@ -27,8 +33,8 @@ policy                  = policy_has_serial_number
 [policy_has_serial_number]
 countryName             = optional
 stateOrProvinceName     = optional
-organizationName        = optional
-organizationalUnitName  = optional
+organizationName        = match
+organizationalUnitName  = supplied
 commonName              = optional
 emailAddress            = optional
 serialNumber            = supplied
@@ -65,4 +71,6 @@ subjectKeyIdentifier    = hash
 permitted;dirName       = req_distinguished_name
 
 [req_distinguished_name]
+organizationName        = $default::dn_org
+organizationalUnitName  = $default::dn_orgunit
 serialNumber            = $default::dn_serialnum
