@@ -17,7 +17,7 @@ export DN_SERIAL_NUMBER=$(echo "$DN" | grep -Po '(?<=\bserialNumber = )[a-f0-9-]
 approved_csr_file="approved-requests/$DN_SERIAL_NUMBER.csr"
 
 if [ -s "$approved_csr_file" ]; then
-    if ! cmp "$CSR" "$approved_csr_file" 2> /dev/null; then
+    if ! cmp "$csr_file" "$approved_csr_file" 2> /dev/null; then
         echo
         echo 'ERROR: A certificate signing request from the same Swaptacular'
         echo '       node has been approved already. Signing another certificate'
