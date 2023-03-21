@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+function delete_temp_crt_file {
+  rm -f "$temp_crt_file"
+}
+
 if [[ -z "$1" || "$1" == "--help" ]]; then
     echo Usage: ./sign [CSR_FILE]
     exit 2
@@ -29,6 +33,7 @@ if [ -s "$approved_csr_file" ]; then
 fi
 
 temp_crt_file=$(mktemp)
+trap delete_temp_crt_file EXIT
 
 openssl ca \
     -config root-ca.conf \
