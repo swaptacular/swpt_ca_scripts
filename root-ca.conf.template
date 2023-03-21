@@ -10,7 +10,7 @@ dn_orgunit              = $ENV::DN_OU
 dn_serialnum            = $ENV::DN_SERIAL_NUMBER
 
 [ca_dn]
-organizationName        = "Swaptacular Nodes"
+organizationName        = "Swaptacular Nodes Registry"
 organizationalUnitName  = "$ORGANIZATIONAL_UNIT_NAME"
 serialNumber            = "$SERIAL_NUMBER"
 

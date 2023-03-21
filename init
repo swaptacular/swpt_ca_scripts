@@ -65,28 +65,62 @@ if [ ! -s root-ca.conf ]; then
     done
 fi
 
-if [ ! -s private/root-ca.key -o ! -s root-ca.csr ]; then
+temporary_csr=root-ca-self-signing.csr
+
+if [ ! -s private/root-ca.key ]; then
+    rm -f root-ca.crt
+    rm -f "$temporary_csr"
     openssl req -new \
             -config root-ca.conf \
-            -out root-ca.csr \
+            -out "$temporary_csr" \
             -keyout private/root-ca.key \
             -reqexts ca_ext
 fi
 
 if [ ! -s root-ca.crt ]; then
-    echo "Creating a self-signed certificate for the root CA..."
+    echo
+    echo "Creating a self-signed certificate for your root CA..."
+    if [ ! -s "$temporary_csr" ]; then
+        openssl req -new \
+                -config root-ca.conf \
+                -out "$temporary_csr" \
+                -key private/root-ca.key \
+                -reqexts ca_ext
+    fi
     openssl ca -selfsign \
             -config root-ca.conf \
-            -in root-ca.csr \
+            -in "$temporary_csr" \
             -out root-ca.crt \
             -extensions ca_ext
+    if [ ! -s root-ca.crt ]; then
+        exit 1
+    fi
+    echo
+    echo '***********************************************************************'
+    echo '* IMPORTANT: You should use the certificate in the ./root-ca.crt      *'
+    echo '*            file, as a trusted root certificate authority (CA) for   *'
+    echo '*            your SSL connections with other Swaptacular nodes.       *'
+    echo '***********************************************************************'
 fi
 
-if [ -s root-ca.crt ]; then
-    echo "Creating an official certificate signing request..."
+rm -f "$temporary_csr"
+
+if [ ! -s root-ca.csr ]; then
+    echo
+    echo 'Creating a CSR for setting up connections with other Swaptacular nodes...'
     openssl req -new \
             -config root-ca.conf \
             -out root-ca.csr \
             -key private/root-ca.key \
             -reqexts ca_ext_official
+    openssl req \
+            -in root-ca.csr \
+            -text \
+            -noout
+    echo
+    echo '***********************************************************************'
+    echo '* IMPORTANT: You can use the above certificate signing request (saved *'
+    echo '*            in the ./root-ca.csr file), to set up permanent          *'
+    echo '*            authenticated connections with other Swaptacular nodes.  *'
+    echo '***********************************************************************'
 fi
