@@ -21,7 +21,7 @@ enter_aa_serial_numbber() {
     export SERIAL_NUMBER="$aa_prefix"
 }
 
-mkdir certs db private 2> /dev/null
+mkdir certs approved-requests db private 2> /dev/null
 chmod 700 private
 touch db/index
 

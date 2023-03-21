@@ -1,16 +1,49 @@
 #!/bin/bash
 set -e
 
-CSR="$1"
-CRT=$(echo "$CSR" | sed s/\.csr$//).crt
+if [[ -z "$1" || "$1" == "--help" ]]; then
+    echo Usage: ./sign [CSR_FILE]
+    exit 2
+fi
 
-DN=$(openssl req -noout -subject -in "$CSR")
+csr_file="$1"
+crt_file=$(echo "$csr_file" | sed s/\.csr$//).crt
+
+DN=$(openssl req -noout -subject -in "$csr_file")
 export DN_O=$(echo "$DN" | grep -Po '(?<=\bO = )[\sA-Za-z0-9-]+')
 export DN_OU=$(echo "$DN" | grep -Po '(?<=\bOU = )[\sA-Za-z0-9-]+')
 export DN_SERIAL_NUMBER=$(echo "$DN" | grep -Po '(?<=\bserialNumber = )[a-f0-9-]+')
 
+approved_csr_file="approved-requests/$DN_SERIAL_NUMBER.csr"
+
+if [ -s "$approved_csr_file" ]; then
+    if ! cmp "$CSR" "$approved_csr_file" 2> /dev/null; then
+        echo
+        echo 'ERROR: A certificate signing request from the same Swaptacular'
+        echo '       node has been approved already. Signing another certificate'
+        echo '       for the same Swaptacular node can not be allowed, because'
+        echo '       this can result in a serious security breach.'
+        echo
+        exit 1
+    fi
+fi
+
+temp_crt_file=$(mktemp)
+
 openssl ca \
     -config root-ca.conf \
-    -in "$CSR" \
-    -out "$CRT" \
+    -in "$csr_file" \
+    -out "$temp_crt_file" \
     -extensions sub_ca_ext
+
+if [ -s "$temp_crt_file" ]; then
+    cp "$csr_file" "$approved_csr_file"
+    mv "$temp_crt_file" $crt_file
+    echo
+    echo '***********************************************************************'
+    echo '* IMPORTANT: A new certificate file has been created. You can send    *'
+    echo '*            it to the owner of the Swaptacular node that made the    *'
+    echo '*            certificate signing request.                             *'
+    echo '***********************************************************************'
+    echo "File location: $crt_file"
+fi
