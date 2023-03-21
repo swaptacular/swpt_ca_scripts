@@ -38,7 +38,7 @@ openssl ca \
 
 if [ -s "$temp_crt_file" ]; then
     cp "$csr_file" "$approved_csr_file"
-    mv "$temp_crt_file" $crt_file
+    mv "$temp_crt_file" "$crt_file"
     echo
     echo '***********************************************************************'
     echo '* IMPORTANT: A new certificate file has been created. You can send    *'
