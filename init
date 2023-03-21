@@ -6,6 +6,21 @@ generate_conf_file() {
              > root-ca.conf
 }
 
+generate_uuid_serial_numbber() {
+    export SERIAL_NUMBER=$(uuidgen)
+}
+
+enter_aa_serial_numbber() {
+    while read -p 'Enter your accounting authority prefix (8 hexadecimals): ' aa_prefix
+    do
+        if echo "$aa_prefix" | grep -E '^[0-9a-f]{8}$' > /dev/null; then
+            break
+        fi
+        echo "An invalid accounting authority prefix has been entered."
+    done
+    export SERIAL_NUMBER="$aa_prefix"
+}
+
 mkdir certs db private 2> /dev/null
 chmod 700 private
 touch db/index
@@ -27,19 +42,19 @@ if [ ! -s root-ca.conf ]; then
         case $opt in
             "Creditors agent")
                 export ORGANIZATIONAL_UNIT_NAME="Creditors Agents"
-                export SERIAL_NUMBER=$(uuidgen)
+                generate_uuid_serial_numbber
                 generate_conf_file
                 break
                 ;;
             "Debtors agent")
                 export ORGANIZATIONAL_UNIT_NAME="Debtors Agents"
-                export SERIAL_NUMBER=$(uuidgen)
+                generate_uuid_serial_numbber
                 generate_conf_file
                 break
                 ;;
             "Accounting authority")
                 export ORGANIZATIONAL_UNIT_NAME="Accounting Authorities"
-                export SERIAL_NUMBER=$(uuidgen)
+                enter_aa_serial_numbber
                 generate_conf_file
                 break
                 ;;
