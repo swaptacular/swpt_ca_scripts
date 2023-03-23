@@ -1,0 +1,50 @@
+#!/bin/bash
+set -e
+
+if [[ "$#" != 1 && "$#" != 2 || "$1" == "--help" ]]; then
+    echo Usage: sign_leaf_cert CSR_FILE [DAYS]
+    exit 2
+fi
+
+csr_file="$1"
+crt_file=$(echo "$csr_file" | sed s/\.csr$//).crt
+
+if [ -s "$crt_file" ]; then
+    echo
+    echo "ERROR: $crt_file file already exists."
+    echo
+    exit 1
+fi
+
+DN=$(openssl req -noout -subject -in "$csr_file")
+DN_O=$(echo "$DN" | grep -Po '(?<=\bO = )[\sA-Za-z0-9-]+')
+DN_OU=$(echo "$DN" | grep -Po '(?<=\bOU = )[\sA-Za-z0-9-]+')
+DN_SERIAL_NUMBER=$(echo "$DN" | grep -Po '(?<=\bserialNumber = )[a-f0-9-]+')
+
+if [[ "$DN_O" != "Swaptacular Nodes Registry" || \
+      "$DN_OU" != "$(cat db/nodetype)" || \
+      "$DN_SERIAL_NUMBER" != "$(cat db/nodeid)" ]]; then
+    echo
+    echo 'ERROR: The subject in the certificate signing request is not the same as'
+    echo '       the issuer of your root CA certificate. You are not supposed to'
+    echo '       issue leaf certificates for Swaptacular nodes other than you own.'
+    echo
+    exit 1
+fi
+
+openssl ca \
+    -config root-ca.conf \
+    -in "$csr_file" \
+    -out "$crt_file" \
+    -days "${2-365}" \
+    -extensions leaf_ext
+
+if [ -s "$crt_file" ]; then
+    echo
+    echo '***********************************************************************'
+    echo '* IMPORTANT: A new certificate file has been created. You can use     *'
+    echo '*            it to establish secure SSL connections with other        *'
+    echo '*            Swaptacular nodes.                                       *'
+    echo '***********************************************************************'
+    echo "File location: $crt_file"
+fi

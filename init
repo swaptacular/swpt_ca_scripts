@@ -109,7 +109,7 @@ if [ ! -s root-ca.csr ]; then
             -config root-ca.conf \
             -out root-ca.csr \
             -key private/root-ca.key \
-            -reqexts ca_ext_official
+            -reqexts ca_official_ext
     openssl req \
             -in root-ca.csr \
             -text \

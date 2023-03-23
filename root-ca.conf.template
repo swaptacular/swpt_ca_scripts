@@ -53,7 +53,7 @@ basicConstraints        = critical,CA:true,pathlen:1
 keyUsage                = critical,keyCertSign,cRLSign
 subjectKeyIdentifier    = hash
 
-[ca_ext_official]
+[ca_official_ext]
 basicConstraints        = critical,CA:true,pathlen:0
 extendedKeyUsage        = clientAuth,serverAuth
 keyUsage                = critical,keyCertSign,cRLSign
@@ -65,6 +65,13 @@ basicConstraints        = critical,CA:true,pathlen:0
 extendedKeyUsage        = clientAuth,serverAuth
 keyUsage                = critical,keyCertSign,cRLSign
 nameConstraints         = critical,@name_constraints
+subjectKeyIdentifier    = hash
+
+[leaf_ext]
+authorityKeyIdentifier  = keyid:always
+basicConstraints        = critical,CA:false
+extendedKeyUsage        = clientAuth,serverAuth
+keyUsage                = critical,digitalSignature,keyEncipherment
 subjectKeyIdentifier    = hash
 
 [name_constraints]

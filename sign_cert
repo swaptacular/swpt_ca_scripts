@@ -5,13 +5,20 @@ function delete_temp_crt_file {
   rm -f "$temp_crt_file"
 }
 
-if [[ -z "$1" || "$1" == "--help" ]]; then
-    echo Usage: ./sign [CSR_FILE]
+if [[ "$#" != 1 || "$1" == "--help" ]]; then
+    echo Usage: sign_cert CSR_FILE
     exit 2
 fi
 
 csr_file="$1"
 crt_file=$(echo "$csr_file" | sed s/\.csr$//).crt
+
+if [ -s "$crt_file" ]; then
+    echo
+    echo "ERROR: $crt_file file already exists."
+    echo
+    exit 1
+fi
 
 DN=$(openssl req -noout -subject -in "$csr_file")
 export DN_O=$(echo "$DN" | grep -Po '(?<=\bO = )[\sA-Za-z0-9-]+')
