@@ -2,7 +2,13 @@
 set -e
 
 if [[ "$#" != 1 && "$#" != 2 || "$1" == "--help" ]]; then
-    echo Usage: sign_leaf_cert CSR_FILE [DAYS]
+    echo 'Generates a certificate file from a certificate signing request (CSR)'
+    echo 'file. The CSR file should be created by your own server(s), using a'
+    echo 'secret private key. The generated certificate can be used by your'
+    echo 'server(s) to establish secure SSL connections with other Swaptacular'
+    echo 'servers.'
+    echo
+    echo 'Usage: sign-leafcert CSR_FILE [DAYS]'
     exit 2
 fi
 
