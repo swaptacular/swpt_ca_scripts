@@ -1,16 +1,14 @@
 #!/bin/bash
 
 generate_conf_file() {
+    export ORGANIZATIONAL_UNIT_NAME=$(cat db/nodetype)
+    export SERIAL_NUMBER=$(cat db/nodeid)
     envsubst '$ORGANIZATIONAL_UNIT_NAME $SERIAL_NUMBER' \
              < root-ca.conf.template \
              > root-ca.conf
 }
 
-generate_uuid_serial_numbber() {
-    export SERIAL_NUMBER=$(uuidgen)
-}
-
-enter_aa_serial_numbber() {
+ask_for_aa_serial_numbber() {
     while read -p 'Enter your accounting authority prefix (8 hexadecimals): ' aa_prefix
     do
         if echo "$aa_prefix" | grep -E '^[0-9a-f]{8}$' > /dev/null; then
@@ -18,7 +16,7 @@ enter_aa_serial_numbber() {
         fi
         echo "An invalid accounting authority prefix has been entered."
     done
-    export SERIAL_NUMBER="$aa_prefix"
+    echo $aa_prefix > db/nodeid
 }
 
 mkdir certs approved-requests db private 2> /dev/null
@@ -35,27 +33,24 @@ if [ ! -s db/crlnumber ]; then
     echo 1001 > db/crlnumber
 fi
 
-if [ ! -s root-ca.conf ]; then
+if [ ! -s db/nodetype -o ! -s db/nodeid ]; then
     PS3="Specify the type of your Swaptacular node: "
     select opt in "Creditors agent" "Debtors agent" "Accounting authority"
     do
         case $opt in
             "Creditors agent")
-                export ORGANIZATIONAL_UNIT_NAME="Creditors Agents"
-                generate_uuid_serial_numbber
-                generate_conf_file
+                echo "Creditors Agents" > db/nodetype
+                echo $(uuidgen) > db/nodeid
                 break
                 ;;
             "Debtors agent")
-                export ORGANIZATIONAL_UNIT_NAME="Debtors Agents"
-                generate_uuid_serial_numbber
-                generate_conf_file
+                echo "Debtors Agents" > db/nodetype
+                echo $(uuidgen) > db/nodeid
                 break
                 ;;
             "Accounting authority")
-                export ORGANIZATIONAL_UNIT_NAME="Accounting Authorities"
-                enter_aa_serial_numbber
-                generate_conf_file
+                echo "Accounting Authorities" > db/nodetype
+                ask_for_aa_serial_numbber
                 break
                 ;;
             *)
@@ -65,14 +60,18 @@ if [ ! -s root-ca.conf ]; then
     done
 fi
 
-temporary_csr=root-ca-self-signing.csr
+if [ ! -s root-ca.conf ]; then
+    generate_conf_file
+fi
+
+self_csr="approved-requests/$(cat db/nodeid).csr"
 
 if [ ! -s private/root-ca.key ]; then
     rm -f root-ca.crt
-    rm -f "$temporary_csr"
+    rm -f "$self_csr"
     openssl req -new \
             -config root-ca.conf \
-            -out "$temporary_csr" \
+            -out "$self_csr" \
             -keyout private/root-ca.key \
             -reqexts ca_ext
 fi
@@ -80,16 +79,16 @@ fi
 if [ ! -s root-ca.crt ]; then
     echo
     echo "Creating a self-signed certificate for your root CA..."
-    if [ ! -s "$temporary_csr" ]; then
+    if [ ! -s "$self_csr" ]; then
         openssl req -new \
                 -config root-ca.conf \
-                -out "$temporary_csr" \
+                -out "$self_csr" \
                 -key private/root-ca.key \
                 -reqexts ca_ext
     fi
     openssl ca -selfsign \
             -config root-ca.conf \
-            -in "$temporary_csr" \
+            -in "$self_csr" \
             -out root-ca.crt \
             -extensions ca_ext
     if [ ! -s root-ca.crt ]; then
@@ -102,8 +101,6 @@ if [ ! -s root-ca.crt ]; then
     echo '*            your SSL connections with other Swaptacular nodes.       *'
     echo '***********************************************************************'
 fi
-
-rm -f "$temporary_csr"
 
 if [ ! -s root-ca.csr ]; then
     echo
