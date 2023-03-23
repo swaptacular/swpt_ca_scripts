@@ -8,7 +8,7 @@ if [[ "$#" != 1 && "$#" != 2 || "$1" == "--help" ]]; then
     echo 'server(s) to establish secure SSL connections with other Swaptacular'
     echo 'servers.'
     echo
-    echo 'Usage: sign-leafcert CSR_FILE [DAYS]'
+    echo 'Usage: sign-servercert CSR_FILE [DAYS]'
     exit 2
 fi
 
@@ -33,7 +33,7 @@ if [[ "$DN_O" != "Swaptacular Nodes Registry" || \
     echo
     echo 'ERROR: The subject in the certificate signing request is not the same as'
     echo '       the issuer of your root CA certificate. You are not supposed to'
-    echo '       issue leaf certificates for Swaptacular nodes other than you own.'
+    echo '       issue server certificates for Swaptacular nodes other than you own.'
     echo
     exit 1
 fi
@@ -43,7 +43,7 @@ openssl ca \
     -in "$csr_file" \
     -out "$crt_file" \
     -days "${2-365}" \
-    -extensions leaf_ext
+    -extensions server_ext
 
 if [ -s "$crt_file" ]; then
     echo

@@ -67,7 +67,7 @@ keyUsage                = critical,keyCertSign,cRLSign
 nameConstraints         = critical,@name_constraints
 subjectKeyIdentifier    = hash
 
-[leaf_ext]
+[server_ext]
 authorityKeyIdentifier  = keyid:always
 basicConstraints        = critical,CA:false
 extendedKeyUsage        = clientAuth,serverAuth

@@ -124,7 +124,7 @@ if [ ! -s root-ca.csr ]; then
     echo
     echo '***********************************************************************'
     echo '* IMPORTANT: You can use the above certificate signing request (saved *'
-    echo '*            in the ./root-ca.csr file), to set up permanent          *'
+    echo '*            in the ./root-ca.csr file), to establish permanent       *'
     echo '*            authenticated connections with other Swaptacular nodes.  *'
     echo '***********************************************************************'
 fi
