@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 if [[ "$#" != 1 && "$#" != 2 || "$1" == "--help" ]]; then
     echo 'Generates a certificate file from a certificate signing request (CSR)'
@@ -27,13 +26,15 @@ DN_O=$(echo "$DN" | grep -Po '(?<=\bO = )[\sA-Za-z0-9-]+')
 DN_OU=$(echo "$DN" | grep -Po '(?<=\bOU = )[\sA-Za-z0-9-]+')
 DN_SERIAL_NUMBER=$(echo "$DN" | grep -Po '(?<=\bserialNumber = )[a-f0-9-]+')
 
+set -e
+
 if [[ "$DN_O" != "Swaptacular Nodes Registry" || \
       "$DN_OU" != "$(cat db/nodetype)" || \
       "$DN_SERIAL_NUMBER" != "$(cat db/nodeid)" ]]; then
     echo
     echo 'ERROR: The subject in the certificate signing request is not the same as'
     echo '       the issuer of your root CA certificate. You are not supposed to'
-    echo '       issue server certificates for Swaptacular nodes other than you own.'
+    echo '       issue server certificates for Swaptacular nodes other than your own.'
     echo
     exit 1
 fi
