@@ -74,6 +74,12 @@ extendedKeyUsage        = clientAuth,serverAuth
 keyUsage                = critical,digitalSignature,keyEncipherment
 subjectKeyIdentifier    = hash
 
+[server_official_ext]
+basicConstraints        = critical,CA:false
+extendedKeyUsage        = clientAuth,serverAuth
+keyUsage                = critical,digitalSignature,keyEncipherment
+subjectKeyIdentifier    = hash
+
 [name_constraints]
 permitted;dirName       = req_distinguished_name
 
