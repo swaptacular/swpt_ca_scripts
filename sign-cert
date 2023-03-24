@@ -38,7 +38,7 @@ if [ -s "$approved_csr_file" ]; then
     # Signing Request) is the same as the public key in the new CSR. This
     # would allow for the easy renewal of expiring certificates. Although,
     # this is not a problem when we use "eternal" certificates.
-    if ! cmp "$csr_file" "$approved_csr_file" 2> /dev/null; then
+    if ! cmp "$csr_file" "$approved_csr_file" &> /dev/null; then
         echo
         echo 'ERROR: A certificate signing request from the same Swaptacular'
         echo '       node has been approved already. Signing another certificate'
