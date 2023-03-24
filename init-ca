@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# TODO: uuidgen is not available by default on Debian. It should be
+# installed by `sudo apt-get install uuid-runtime`.
+
 if [[ "$#" != 0 ]]; then
     echo 'Initialises the root-CA database. Should be run once, in the beginning.'
     echo
