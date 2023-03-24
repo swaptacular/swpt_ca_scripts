@@ -1,5 +1,12 @@
 #!/bin/bash
 
+if [[ "$#" != 0 ]]; then
+    echo 'Initialises the root-CA database. Should be run once, in the beginning.'
+    echo
+    echo 'Usage: init-ca'
+    exit 2
+fi
+
 for dependency in openssl envsubst uuidgen cmp
 do
     if ! which "$dependency" &> /dev/null; then
@@ -9,13 +16,6 @@ do
         exit 2
     fi
 done
-
-if [[ "$#" != 0 ]]; then
-    echo 'Initialises the root-CA database. Should be run once, in the beginning.'
-    echo
-    echo 'Usage: init-ca'
-    exit 2
-fi
 
 generate_conf_file() {
     export ORGANIZATIONAL_UNIT_NAME=$(cat db/nodetype)
