@@ -7,7 +7,7 @@ if [[ "$#" != 0 ]]; then
     exit 2
 fi
 
-for dependency in openssl envsubst uuidgen cmp
+for dependency in openssl envsubst uuidgen cmp flock
 do
     if ! which "$dependency" &> /dev/null; then
         echo
@@ -36,7 +36,7 @@ ask_for_aa_serial_numbber() {
     echo $aa_prefix > db/nodeid
 }
 
-mkdir certs approved-requests db private 2> /dev/null
+mkdir certs approved-requests private db db/creditor-subnets db/debtor-subnets 2> /dev/null
 chmod 700 private
 touch db/index
 

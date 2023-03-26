@@ -5,6 +5,53 @@ function delete_temp_crt_file {
   rm -f "$temp_crt_file"
 }
 
+function reserve_subnet {
+    subnet_dir="$1"
+    subnet_len="$2"
+    subnet_nodeid="$3"
+    format_str="%0${subnet_len}x\n"
+    seqnum_file="$subnet_dir/SEQNUM"
+    seqnum=$(flock -s "$seqnum_file" cat "$seqnum_file")
+    error_code=0
+    set -o noclobber
+    while true
+    do
+        seqnum=$((seqnum+1))
+        subnet=$(printf "$format_str" "$seqnum")
+        if [ "${#subnet}" -gt "$subnet_len" ]; then
+            error_code=1
+            break
+        fi
+        if echo "$subnet_nodeid" > "$subnet_dir/$subnet"; then
+            break
+        fi
+    done
+    set +o noclobber
+    flock -x "$seqnum_file" echo "$seqnum" > "$seqnum_file"
+    return "$error_code"
+}
+
+function reserve_creditor_subnet {
+    reserve_subnet "db/creditor-subnets" 8 "$1"
+}
+
+function reserve_debtor_subnet {
+    reserve_subnet "db/debtor-subnets" 2 "$1"
+}
+
+function reserve_exclusive_subnet {
+    subnet_dir="db/debtor-subnets"
+    subnet_nodeid="$1"
+    subnet=
+    error_code=1
+    set -o noclobber
+    if echo "$subnet_nodeid" > "$subnet_dir/EXCLUSIVE"; then
+        error_code=0
+    fi
+    set +o noclobber
+    return "$error_code"
+}
+
 if [[ "$#" != 1 || "$1" == "--help" ]]; then
     echo 'Generates a certificate file from a certificate signing request (CSR)'
     echo 'file. The CSR file should be created and sent to you by another'
