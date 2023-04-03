@@ -1,0 +1,55 @@
+#!/bin/bash
+
+if [[ "$1" == "--help" ]]; then
+    echo 'Creates a request bundle file. If given, the files FILE1, FILE2, etc.'
+    echo 'will be added to the created bundle. Those files may contain additional'
+    echo 'information about your Swaptacular node.'
+    echo
+    echo 'Usage: create-reqbundle [FILE1 FILE2 ...]'
+    exit 2
+fi
+
+set -e
+
+servers_file="servers.txt"
+
+if [ ! -s "$servers_file" ]; then
+    echo 'You must specify the network address of your server(s). The network'
+    echo 'address consists of a domain name and a port number, separated by a colon.'
+    echo 'For example: "myserver.example.com:1234".'
+    echo
+    read -p 'Network address: ' server_address
+    echo "$server_address" > "$servers_file"
+fi
+
+required_files=("root-ca.crt" "root-ca.csr" "$servers_file")
+
+for file in ${required_files[@]} "$@"; do
+    if [ ! -f "$file" ]; then
+        echo
+        echo "ERROR: $file does not exist."
+        echo
+        exit 1
+    fi
+done
+
+bundle_file=reqbundle.zip
+
+if [ -s "$bundle_file" ]; then
+    echo
+    echo "ERROR: $bundle_file already exists."
+    echo
+    exit 1
+fi
+
+zip -X "$bundle_file" ${required_files[@]} "$@"
+
+echo
+echo '***********************************************************************'
+echo '* IMPORTANT: A new request bundle file has been created. If you want  *'
+echo '*            to establish a permanent authenticated connection with   *'
+echo '*            another Swaptacular node, you should send this file to   *'
+echo '*            the owners of the Swaptacular node, and wait for a       *'
+echo '*            corresponding response bundle.                           *'
+echo '***********************************************************************'
+echo "File location: $bundle_file"
