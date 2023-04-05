@@ -160,7 +160,7 @@ if [ -s "$temp_crt_file" ]; then
     pushd . > /dev/null
     cd "$temp_dir"
     zip -X peerbundle ${peerbundle_files[@]}
-    rm "$temp_crt_file"
+    rm "$temp_crt_file" "$csr_file"
     popd > /dev/null
     mv "$temp_dir" "$peer_dir"
 
