@@ -174,7 +174,7 @@ if [ -s "$temp_crt_file" ]; then
     echo '*                                                                     *'
     echo '*            Also, do not forget to send your own request bundle      *'
     echo '*            file as well (see the "create-reqbundle" command), so    *'
-    echo '*            that you could receive a corresponding certificate from  *'
+    echo '*            that you too, could receive a signed certificate from    *'
     echo '*            your peer node.                                          *'
     echo '***********************************************************************'
     echo "File location: $peer_dir/peerbundle.zip"
