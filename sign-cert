@@ -75,7 +75,6 @@ function save_subnet {
             if ! reserve_creditor_subnet "$DN_SERIAL_NUMBER"; then
                 can_not_reserve_subnet
             fi
-            break
             ;;
         "Debtors Agents")
             if [[ "$DN_OU" != "Accounting Authorities" ]]; then
@@ -84,7 +83,6 @@ function save_subnet {
             if ! reserve_exclusive_subnet "$DN_SERIAL_NUMBER"; then
                 can_not_reserve_subnet
             fi
-            break
             ;;
         "Accounting Authorities")
             case "$DN_OU" in
@@ -92,19 +90,16 @@ function save_subnet {
                     if ! reserve_creditor_subnet "$DN_SERIAL_NUMBER"; then
                         can_not_reserve_subnet
                     fi
-                    break
                     ;;
                 "Debtors Agents")
                     if ! reserve_debtor_subnet "$DN_SERIAL_NUMBER"; then
                         can_not_reserve_subnet
                     fi
-                    break
                     ;;
                 *)
                     invalid_node_type
                     ;;
             esac
-            break
             ;;
         *)
             invalid_node_type
@@ -161,6 +156,7 @@ openssl ca \
 
 if [ -s "$temp_crt_file" ]; then
     save_subnet "$temp_dir/subnet.txt"
+    echo "$DN_OU" > "$temp_dir/nodetype.txt"
     pushd . > /dev/null
     cd "$temp_dir"
     zip -X peerbundle ${peerbundle_files[@]}

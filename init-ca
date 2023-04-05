@@ -62,17 +62,14 @@ if [ ! -s db/nodetype -o ! -s db/nodeid ]; then
             "Creditors agent")
                 echo "Creditors Agents" > db/nodetype
                 echo $(uuidgen) > db/nodeid
-                break
                 ;;
             "Debtors agent")
                 echo "Debtors Agents" > db/nodetype
                 echo $(uuidgen) > db/nodeid
-                break
                 ;;
             "Accounting authority")
                 echo "Accounting Authorities" > db/nodetype
                 ask_for_aa_serial_numbber
-                break
                 ;;
             *)
                 echo "Invalid option $REPLY"
