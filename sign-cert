@@ -109,7 +109,7 @@ function save_subnet {
 }
 
 if [[ "$#" != 1 || "$1" == "--help" ]]; then
-    echo 'Generates a peer bundle file, containing a signed certificate, from'
+    echo 'Creates a peer bundle file, containing a signed certificate, from'
     echo 'a request bundle file, containing a certificate signing request (CSR).'
     echo 'The request bundle file should be created and sent to you by another'
     echo 'Swaptacular node, which wants to establish a permanent authenticated '
