@@ -54,15 +54,14 @@ function reserve_debtor_subnet {
 }
 
 function reserve_exclusive_subnet {
-    subnet_nodeid="$1"
     subnet=
-    error_code=1
-    set -o noclobber
-    if echo "$subnet_nodeid" > db/aa-peer; then
-        error_code=0
-    fi
-    set +o noclobber
-    return "$error_code"
+    for filename in peers/*
+    do
+        if [ -d "$filename" ]; then
+            return 1
+        fi
+    done
+    return 0
 }
 
 function save_subnet {
