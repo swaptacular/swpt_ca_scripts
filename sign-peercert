@@ -46,20 +46,19 @@ function reserve_subnet {
 }
 
 function reserve_creditor_subnet {
-    reserve_subnet "db/creditor-subnets" 8 "$1"
+    reserve_subnet "subnets/creditors" 8 "$1"
 }
 
 function reserve_debtor_subnet {
-    reserve_subnet "db/debtor-subnets" 2 "$1"
+    reserve_subnet "subnets/debtors" 2 "$1"
 }
 
 function reserve_exclusive_subnet {
-    subnet_dir="db/debtor-subnets"
     subnet_nodeid="$1"
     subnet=
     error_code=1
     set -o noclobber
-    if echo "$subnet_nodeid" > "$subnet_dir/EXCLUSIVE"; then
+    if echo "$subnet_nodeid" > db/aa-peer; then
         error_code=0
     fi
     set +o noclobber
@@ -69,14 +68,13 @@ function reserve_exclusive_subnet {
 function save_subnet {
     case "$(cat db/nodetype)" in
         "Creditors Agents")
+            # Creditors agents do not allocate subnets.
             if [[ "$DN_OU" != "Accounting Authorities" ]]; then
                 invalid_node_type
             fi
-            if ! reserve_creditor_subnet "$DN_SERIAL_NUMBER"; then
-                can_not_reserve_subnet
-            fi
             ;;
         "Debtors Agents")
+            # Debtors agents are allowed to have only one peer.
             if [[ "$DN_OU" != "Accounting Authorities" ]]; then
                 invalid_node_type
             fi
@@ -100,12 +98,12 @@ function save_subnet {
                     invalid_node_type
                     ;;
             esac
+            echo "$subnet" > "$1"
             ;;
         *)
             invalid_node_type
             ;;
     esac
-    echo "$subnet" > "$1"
 }
 
 if [[ "$#" != 1 || "$1" == "--help" ]]; then

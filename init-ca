@@ -40,7 +40,7 @@ function ask_for_aa_serial_numbber {
     echo $aa_prefix > db/nodeid
 }
 
-mkdir certs private peers db db/creditor-subnets db/debtor-subnets 2> /dev/null
+mkdir certs private peers db 2> /dev/null
 chmod 700 private
 touch db/index
 
@@ -60,16 +60,25 @@ if [ ! -s db/nodetype -o ! -s db/nodeid ]; then
     do
         case $opt in
             "Creditors agent")
+                echo "00000001" > subnet.txt
                 echo "Creditors Agents" > db/nodetype
                 echo $(uuidgen) > db/nodeid
+                break
                 ;;
             "Debtors agent")
                 echo "Debtors Agents" > db/nodetype
                 echo $(uuidgen) > db/nodeid
+                break
                 ;;
             "Accounting authority")
                 echo "Accounting Authorities" > db/nodetype
+                mkdir subnets 2> /dev/null || true
+                mkdir subnets/debtors 2> /dev/null || true
+                mkdir subnets/creditors 2> /dev/null || true
+                echo "-1" > subnets/debtors/SEQNUM
+                echo "0" > subnets/creditors/SEQNUM
                 ask_for_aa_serial_numbber
+                break
                 ;;
             *)
                 echo "Invalid option $REPLY"
