@@ -115,7 +115,7 @@ if [[ "$#" != 1 || "$1" == "--help" ]]; then
     echo 'Swaptacular node, which wants to establish a permanent authenticated '
     echo 'connection with your Swaptacular node.'
     echo
-    echo 'Usage: sign-cert REQBUNDLE_FILE'
+    echo 'Usage: sign-peercert REQBUNDLE_FILE'
     exit 2
 fi
 
