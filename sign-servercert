@@ -11,6 +11,20 @@ if [[ "$#" != 1 && "$#" != 2 || "$1" == "--help" ]]; then
     exit 2
 fi
 
+function find_script_dir {
+    SOURCE=${BASH_SOURCE[0]}
+    while [ -L "$SOURCE" ]; do # resolve $SOURCE until the file is not a symlink
+        DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
+        SOURCE=$(readlink "$SOURCE")
+        # If $SOURCE was a relative symlink, we need to resolve it relative
+        # to the path where the symlink file was located.
+        [[ $SOURCE != /* ]] && SOURCE=$DIR/$SOURCE
+    done
+    DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
+}
+
+find_script_dir || exit 3
+
 csr_file="$1"
 crt_file=$(echo "$csr_file" | sed s/\.csr$//).crt
 
@@ -29,8 +43,8 @@ DN_SERIAL_NUMBER=$(echo "$DN" | grep -Po '(?<=\bserialNumber = )[a-f0-9-]+')
 set -e
 
 if [[ "$DN_O" != "Swaptacular Nodes Registry" || \
-      "$DN_OU" != "$(cat db/nodetype)" || \
-      "$DN_SERIAL_NUMBER" != "$(cat db/nodeid)" ]]; then
+      "$DN_OU" != "$(cat "$DIR/db/nodetype")" || \
+      "$DN_SERIAL_NUMBER" != "$(cat "$DIR/db/nodeid")" ]]; then
     echo
     echo 'ERROR: The subject in the certificate signing request is not the same as'
     echo '       the issuer of your root CA certificate. You are not supposed to'
@@ -40,7 +54,7 @@ if [[ "$DN_O" != "Swaptacular Nodes Registry" || \
 fi
 
 openssl ca \
-    -config root-ca.conf \
+    -config "$DIR/root-ca.conf" \
     -in "$csr_file" \
     -out "$crt_file" \
     -days "${2-365}" \

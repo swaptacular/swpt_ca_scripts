@@ -17,6 +17,18 @@ do
     fi
 done
 
+function find_script_dir {
+    SOURCE=${BASH_SOURCE[0]}
+    while [ -L "$SOURCE" ]; do # resolve $SOURCE until the file is not a symlink
+        DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
+        SOURCE=$(readlink "$SOURCE")
+        # If $SOURCE was a relative symlink, we need to resolve it relative
+        # to the path where the symlink file was located.
+        [[ $SOURCE != /* ]] && SOURCE=$DIR/$SOURCE
+    done
+    DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
+}
+
 function delete_self_csr {
     rm -f "$self_csr"
 }
@@ -40,6 +52,8 @@ function ask_for_aa_serial_numbber {
     echo $aa_prefix > db/nodeid
 }
 
+find_script_dir || exit 3
+cd "$DIR" || exit 3
 mkdir certs private peers db 2> /dev/null
 chmod 700 private
 touch db/index
@@ -124,8 +138,10 @@ if [ ! -s root-ca.crt ]; then
     fi
     echo
     echo '***********************************************************************'
-    echo '* IMPORTANT: You should use the certificate in the ./root-ca.crt      *'
-    echo '*            file, as a trusted root certificate authority (CA) for   *'
-    echo '*            your SSL connections with other Swaptacular nodes.       *'
+    echo '* IMPORTANT: A new self-signed certificate file has been created for  *'
+    echo '*            your Swaptacular node. You should use this certificate   *'
+    echo '*            as a trusted root certificate authority (CA) for your    *'
+    echo '*            SSL connections with other Swaptacular nodes.            *'
     echo '***********************************************************************'
+    echo "File location: $DIR/root-ca.crt"
 fi

@@ -10,6 +10,20 @@ if [[ "$#" != 1 || "$1" == "--help" ]]; then
     exit 2
 fi
 
+function find_script_dir {
+    SOURCE=${BASH_SOURCE[0]}
+    while [ -L "$SOURCE" ]; do # resolve $SOURCE until the file is not a symlink
+        DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
+        SOURCE=$(readlink "$SOURCE")
+        # If $SOURCE was a relative symlink, we need to resolve it relative
+        # to the path where the symlink file was located.
+        [[ $SOURCE != /* ]] && SOURCE=$DIR/$SOURCE
+    done
+    DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
+}
+
+find_script_dir || exit 3
+
 filename="$1"
 key_file="$filename.key"
 csr_file="$filename.csr"
@@ -31,7 +45,7 @@ fi
 openssl req \
     -new \
     -nodes \
-    -config root-ca.conf \
+    -config "$DIR/root-ca.conf" \
     -out "$csr_file" \
     -keyout "$key_file" \
     -reqexts server_official_ext

@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 if [[ "$#" == 0 || "$1" == "--help" ]]; then
     echo 'Creates a request bundle file (a .zip file). If given, the files'
@@ -9,29 +10,41 @@ if [[ "$#" == 0 || "$1" == "--help" ]]; then
     exit 2
 fi
 
-set -e
+function find_script_dir {
+    SOURCE=${BASH_SOURCE[0]}
+    while [ -L "$SOURCE" ]; do # resolve $SOURCE until the file is not a symlink
+        DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
+        SOURCE=$(readlink "$SOURCE")
+        # If $SOURCE was a relative symlink, we need to resolve it relative
+        # to the path where the symlink file was located.
+        [[ $SOURCE != /* ]] && SOURCE=$DIR/$SOURCE
+    done
+    DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
+}
 
-if [ ! -s root-ca.csr ]; then
+find_script_dir || exit 3
+
+if [ ! -s "$DIR/root-ca.csr" ]; then
     echo 'To be able to set up permanent authenticated connections with other'
     echo 'Swaptacular nodes, a certificate signing request (CSR) must be'
     echo 'created first.'
     echo
     openssl req -new \
-            -config root-ca.conf \
-            -out root-ca.csr \
-            -key private/root-ca.key \
+            -config "$DIR/root-ca.conf" \
+            -out "$DIR/root-ca.csr" \
+            -key "$DIR/private/root-ca.key" \
             -reqexts ca_official_ext
     openssl req \
-            -in root-ca.csr \
+            -in "$DIR/root-ca.csr" \
             -text \
             -noout
     echo
 fi
 
-servers_file="servers.txt"
+servers_file="$DIR/servers.txt"
 
 if [ -s "$servers_file" ]; then
-    echo "Found $servers_file file. Reading network addresses from it:"
+    echo "Found servers.txt file. Reading network addresses from it:"
     cat "$servers_file"
 else
     echo 'You must specify the network address of your server(s). The network'
@@ -42,7 +55,7 @@ else
     echo "$server_address" > "$servers_file"
 fi
 
-required_files=("root-ca.crt" "root-ca.csr" "$servers_file")
+required_files=("$DIR/root-ca.crt" "$DIR/root-ca.csr" "$servers_file")
 bundle_file=$(echo "$1" | sed s/\.zip$//).zip
 shift
 
@@ -62,7 +75,7 @@ if [ -s "$bundle_file" ]; then
     exit 1
 fi
 
-zip -X "$bundle_file" ${required_files[@]} "$@"
+zip -Xj "$bundle_file" ${required_files[@]} "$@"
 
 echo
 echo '***********************************************************************'

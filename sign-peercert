@@ -1,6 +1,29 @@
 #!/bin/bash
 set -e
 
+if [[ "$#" != 1 || "$1" == "--help" ]]; then
+    echo 'Creates a peer bundle file, containing a signed certificate, from'
+    echo 'a request bundle file, containing a certificate signing request (CSR).'
+    echo 'The request bundle file should be created and sent to you by another'
+    echo 'Swaptacular node, which wants to establish a permanent authenticated '
+    echo 'connection with your Swaptacular node.'
+    echo
+    echo 'Usage: sign-peercert REQBUNDLE_FILE'
+    exit 2
+fi
+
+function find_script_dir {
+    SOURCE=${BASH_SOURCE[0]}
+    while [ -L "$SOURCE" ]; do # resolve $SOURCE until the file is not a symlink
+        DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
+        SOURCE=$(readlink "$SOURCE")
+        # If $SOURCE was a relative symlink, we need to resolve it relative
+        # to the path where the symlink file was located.
+        [[ $SOURCE != /* ]] && SOURCE=$DIR/$SOURCE
+    done
+    DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
+}
+
 function delete_temp_dir {
     rm -rf "$temp_dir"
 }
@@ -46,16 +69,16 @@ function reserve_subnet {
 }
 
 function reserve_creditor_subnet {
-    reserve_subnet "subnets/creditors" 8 "$1"
+    reserve_subnet "$DIR/subnets/creditors" 8 "$1"
 }
 
 function reserve_debtor_subnet {
-    reserve_subnet "subnets/debtors" 2 "$1"
+    reserve_subnet "$DIR/subnets/debtors" 2 "$1"
 }
 
 function reserve_exclusive_subnet {
     subnet=
-    for filename in peers/*
+    for filename in "$DIR/peers"/*
     do
         if [ -d "$filename" ]; then
             return 1
@@ -65,7 +88,7 @@ function reserve_exclusive_subnet {
 }
 
 function save_subnet {
-    case "$(cat db/nodetype)" in
+    case "$(cat "$DIR/db/nodetype")" in
         "Creditors Agents")
             # Creditors agents do not allocate subnets.
             if [[ "$DN_OU" != "Accounting Authorities" ]]; then
@@ -105,17 +128,7 @@ function save_subnet {
     esac
 }
 
-if [[ "$#" != 1 || "$1" == "--help" ]]; then
-    echo 'Creates a peer bundle file, containing a signed certificate, from'
-    echo 'a request bundle file, containing a certificate signing request (CSR).'
-    echo 'The request bundle file should be created and sent to you by another'
-    echo 'Swaptacular node, which wants to establish a permanent authenticated '
-    echo 'connection with your Swaptacular node.'
-    echo
-    echo 'Usage: sign-peercert REQBUNDLE_FILE'
-    exit 2
-fi
-
+find_script_dir || exit 3
 
 temp_dir=$(mktemp -d)
 trap delete_temp_dir EXIT
@@ -128,9 +141,9 @@ export DN_O=$(echo "$DN" | grep -Po '(?<=\bO = )[\sA-Za-z0-9-]+')
 export DN_OU=$(echo "$DN" | grep -Po '(?<=\bOU = )[\sA-Za-z0-9-]+')
 export DN_SERIAL_NUMBER=$(echo "$DN" | grep -Po '(?<=\bserialNumber = )[a-f0-9-]+')
 
-peer_dir="peers/$DN_SERIAL_NUMBER"
+peer_dir="$DIR/peers/$DN_SERIAL_NUMBER"
 
-if [[ "$DN_SERIAL_NUMBER" == "$(cat db/nodeid)" || -d "$peer_dir" ]]; then
+if [[ "$DN_SERIAL_NUMBER" == "$(cat "$DIR/db/nodeid")" || -d "$peer_dir" ]]; then
     echo
     echo 'ERROR: A certificate signing request from the Swaptacular node'
     echo "       \"$DN_SERIAL_NUMBER\" has been approved already."
@@ -147,7 +160,7 @@ peerbundle_files=("$crt_filename" "subnet.txt")
 echo
 
 openssl ca \
-    -config root-ca.conf \
+    -config "$DIR/root-ca.conf" \
     -in "$csr_file" \
     -out "$temp_crt_file" \
     -extensions sub_ca_ext
