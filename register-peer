@@ -1,0 +1,187 @@
+#!/bin/bash
+set -e
+
+if [[ "$#" != 1 || "$1" == "--help" ]]; then
+    echo 'Reads a peer bundle file and updates the contents of the "peers"'
+    echo 'directory accordingly. Each peer bundle file contains a certificate'
+    echo 'which can be used to establish an authenticated connection with a'
+    echo 'given peer node. The peer bundle file may also contain additional'
+    echo 'information about the peer node.'
+    echo
+    echo 'Usage: register-peer PEERBUNDLE_FILE'
+    exit 2
+fi
+
+function find_script_dir {
+    SOURCE=${BASH_SOURCE[0]}
+    while [ -L "$SOURCE" ]; do # resolve $SOURCE until the file is not a symlink
+        DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
+        SOURCE=$(readlink "$SOURCE")
+        # If $SOURCE was a relative symlink, we need to resolve it relative
+        # to the path where the symlink file was located.
+        [[ $SOURCE != /* ]] && SOURCE=$DIR/$SOURCE
+    done
+    DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
+}
+
+function delete_temp_dir {
+    rm -rf "$temp_dir"
+}
+
+function invalid_node_type {
+    echo
+    echo "ERROR: The node type is invalid."
+    echo
+    exit 1
+}
+
+function invalid_certificate {
+    echo
+    echo 'ERROR: The certificate is invalid.'
+    echo
+    exit 1
+}
+
+function verify_issuer {
+    DN=$(openssl x509 -noout -issuer -in "$1")
+    DN_O=$(echo "$DN" | grep -Po '(?<=\bO = )[\sA-Za-z0-9-]+')
+    DN_OU=$(echo "$DN" | grep -Po '(?<=\bOU = )[\sA-Za-z0-9-]+')
+    DN_SERIAL_NUMBER=$(echo "$DN" | grep -Po '(?<=\bserialNumber = )[a-f0-9-]+')
+
+    if [[ "$DN_O" != "Swaptacular Nodes Registry" ]]; then
+        invalid_node_type
+    fi
+
+    case "$(cat "$DIR/db/nodetype")" in
+        "Creditors Agents")
+            if [[ "$DN_OU" != "Accounting Authorities" ]]; then
+                invalid_node_type
+            fi
+            ;;
+        "Debtors Agents")
+            if [[ "$DN_OU" != "Accounting Authorities" ]]; then
+                invalid_node_type
+            fi
+            ;;
+        "Accounting Authorities")
+            case "$DN_OU" in
+                "Creditors Agents" | "Debtors Agents")
+                    # valid
+                    ;;
+                *)
+                    invalid_node_type
+                    ;;
+            esac
+            ;;
+        *)
+            invalid_node_type
+            ;;
+    esac
+
+    if [[ ! -d "$DIR/peers/$DN_SERIAL_NUMBER" ]]; then
+        echo
+        echo "ERROR: Unknown peer node \"$DN_SERIAL_NUMBER\"".
+        echo
+        echo '       To be able to register a peer node, first you need to receive'
+        echo '       a request bundle from the owner of the Swaptacular node, and then'
+        echo '       use the "sign-peercert" command to create and send a certificate'
+        echo '       for your peer.'
+        exit 1
+    fi
+}
+
+function verify_subject {
+    sbj_dn=$(openssl x509 -noout -subject -in "$1")
+    sbj_dn_o=$(echo "$sbj_dn" | grep -Po '(?<=\bO = )[\sA-Za-z0-9-]+')
+    sbj_dn_ou=$(echo "$sbj_dn" | grep -Po '(?<=\bOU = )[\sA-Za-z0-9-]+')
+    sbj_dn_sn=$(echo "$sbj_dn" | grep -Po '(?<=\bserialNumber = )[a-f0-9-]+')
+
+    if [[ "$sbj_dn_o" != "Swaptacular Nodes Registry" ]]; then
+        invalid_certificate
+    fi
+
+    if [[ "$sbj_dn_ou" != "$(cat "$DIR/db/nodetype")" ]]; then
+        invalid_certificate
+    fi
+
+    if [[ "$sbj_dn_sn" != "$(cat "$DIR/db/nodeid")" ]]; then
+        invalid_certificate
+    fi
+}
+
+function verify_enddate {
+    enddate_output=$(openssl x509 -noout -enddate -in "$1")
+    enddate=$(echo "$enddate_output" | grep -Po '(?<=notAfter=).*')
+    endyear=$(date --date="$enddate" "+%Y")
+    thisyear=$(date "+%Y")
+    aheadyear=$((thisyear+500))
+    if [ "$aheadyear" -gt "$endyear" ]; then
+        echo
+        echo 'ERROR: The end date of the certificate is not far enough in the future.'
+        echo
+        exit 1
+    fi
+}
+
+find_script_dir || exit 3
+
+temp_dir=$(mktemp -d)
+trap delete_temp_dir EXIT
+
+unzip "$1" -d "$temp_dir"
+crt_file="$temp_dir/sub-ca.crt"
+subnet_file="$temp_dir/subnet.txt"
+
+verify_issuer "$crt_file"
+verify_subject "$crt_file"
+verify_enddate "$crt_file"
+
+mkdir "$DIR/peers" 2> /dev/null || true
+peer_dir="$DIR/peers/$DN_SERIAL_NUMBER"
+ca_file="$peer_dir/root-ca.crt"
+
+if ! openssl verify -CAfile "$ca_file" "$crt_file"; then
+    invalid_certificate
+fi
+
+
+echo $DN_O
+echo $DN_OU
+echo $DN_SERIAL_NUMBER
+exit 0
+
+crt_filename=sub-ca.crt
+temp_crt_file="$temp_dir/$crt_filename"
+peerbundle_files=("$crt_filename" "subnet.txt")
+echo
+
+openssl ca \
+    -config "$DIR/root-ca.conf" \
+    -in "$csr_file" \
+    -out "$temp_crt_file" \
+    -extensions sub_ca_ext
+
+if [ -s "$temp_crt_file" ]; then
+    save_subnet "$temp_dir/subnet.txt"
+    echo "$DN_OU" > "$temp_dir/nodetype.txt"
+    pushd . > /dev/null
+    cd "$temp_dir"
+    zip -X peerbundle ${peerbundle_files[@]}
+    rm "$temp_crt_file" "$csr_file"
+    popd > /dev/null
+    mv "$temp_dir" "$peer_dir"
+
+    echo
+    echo '***********************************************************************'
+    echo '* IMPORTANT: A new peer bundle file has been created, containing the  *'
+    echo '*            certificate that you just signed. You should send this   *'
+    echo '*            file to the owner of the Swaptacular node that made the  *'
+    echo '*            certificate signing request.                             *'
+    echo '*                                                                     *'
+    echo '*            Also, do not forget to send your own request bundle      *'
+    echo '*            file as well (see the "create-reqbundle" command), so    *'
+    echo '*            that you too, could receive a signed certificate from    *'
+    echo '*            your peer node.                                          *'
+    echo '***********************************************************************'
+    echo "File location: $peer_dir/peerbundle.zip"
+fi

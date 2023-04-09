@@ -7,7 +7,7 @@ if [[ "$#" != 0 ]]; then
     exit 2
 fi
 
-for dependency in openssl envsubst uuidgen cmp flock printf zip unzip
+for dependency in openssl envsubst uuidgen cmp flock printf zip unzip date
 do
     if ! which "$dependency" &> /dev/null; then
         echo
