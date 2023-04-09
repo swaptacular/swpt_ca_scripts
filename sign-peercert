@@ -144,6 +144,7 @@ export DN_O=$(echo "$DN" | grep -Po '(?<=\bO = )[\sA-Za-z0-9-]+')
 export DN_OU=$(echo "$DN" | grep -Po '(?<=\bOU = )[\sA-Za-z0-9-]+')
 export DN_SERIAL_NUMBER=$(echo "$DN" | grep -Po '(?<=\bserialNumber = )[a-f0-9-]+')
 
+mkdir "$DIR/peers" 2> /dev/null || true
 peer_dir="$DIR/peers/$DN_SERIAL_NUMBER"
 
 if [[ "$DN_SERIAL_NUMBER" == "$(cat "$DIR/db/nodeid")" || -d "$peer_dir" ]]; then

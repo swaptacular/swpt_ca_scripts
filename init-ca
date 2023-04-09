@@ -54,7 +54,7 @@ function ask_for_aa_serial_numbber {
 
 find_script_dir || exit 3
 cd "$DIR" || exit 3
-mkdir certs private peers db 2> /dev/null
+mkdir certs private db 2> /dev/null
 chmod 700 private
 touch db/index
 
