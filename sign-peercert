@@ -43,9 +43,11 @@ function can_not_reserve_subnet {
 }
 
 function reserve_subnet {
+    subnet=
     subnet_dir="$1"
     subnet_len="$2"
     subnet_nodeid="$3"
+    prefix="$4"
     format_str="%0${subnet_len}x\n"
     seqnum_file="$subnet_dir/SEQNUM"
     seqnum=$(flock -s "$seqnum_file" cat "$seqnum_file")
@@ -54,11 +56,12 @@ function reserve_subnet {
     while true
     do
         seqnum=$((seqnum+1))
-        subnet=$(printf "$format_str" "$seqnum")
-        if [ "${#subnet}" -gt "$subnet_len" ]; then
+        subnet_without_prefix=$(printf "$format_str" "$seqnum")
+        if [ "${#subnet_without_prefix}" -gt "$subnet_len" ]; then
             error_code=1
             break
         fi
+        subnet="$prefix$subnet_without_prefix"
         if echo "$subnet_nodeid" > "$subnet_dir/$subnet"; then
             break
         fi
@@ -73,7 +76,7 @@ function reserve_creditor_subnet {
 }
 
 function reserve_debtor_subnet {
-    reserve_subnet "$DIR/subnets/debtors" 2 "$1"
+    reserve_subnet "$DIR/subnets/debtors" 2 "$1" "$(cat "$DIR/db/nodeid")"
 }
 
 function reserve_exclusive_subnet {
