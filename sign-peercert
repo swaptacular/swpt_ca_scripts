@@ -35,11 +35,42 @@ function invalid_node_type {
     exit 1
 }
 
+function invalid_certificate {
+    echo
+    echo 'ERROR: The certificate is invalid.'
+    echo
+    exit 1
+}
+
 function can_not_reserve_subnet {
     echo
     echo "ERROR: Can not reserve a subnet."
     echo
     exit 1
+}
+
+function verify_root_crt_files {
+    echo
+    echo 'Checking the self-signed certificate...'
+    cert_count=0
+    while openssl x509 -noout &> /dev/null; do
+        cert_count=$((cert_count+1))
+    done < "$1"
+    if [[ "$cert_count" != 1 ]]; then
+        invalid_certificate
+    fi
+    crt_pubkey="$(openssl x509 -in "$1" -noout -pubkey)"
+    csr_pubkey="$(openssl req -in "$2" -noout -pubkey)"
+    if [[ "$crt_pubkey" != "$csr_pubkey" ]]; then
+        invalid_certificate
+    fi
+    DN=$(openssl req -in "$2" -noout -subject )
+    if [[ "$DN" != "$(openssl x509 -in "$1" -noout -subject)" ]]; then
+        invalid_certificate
+    fi
+    if ! openssl verify -check_ss_sig -trusted "$1" "$1"; then
+        invalid_certificate
+    fi
 }
 
 function reserve_subnet {
@@ -138,8 +169,8 @@ trap delete_temp_dir EXIT
 
 unzip "$1" -d "$temp_dir"
 csr_file="$temp_dir/root-ca.csr"
+verify_root_crt_files "$temp_dir/root-ca.crt" "$csr_file"
 
-DN=$(openssl req -noout -subject -in "$csr_file")
 export DN_O=$(echo "$DN" | grep -Po '(?<=\bO = )[\sA-Za-z0-9-]+')
 export DN_OU=$(echo "$DN" | grep -Po '(?<=\bOU = )[\sA-Za-z0-9-]+')
 export DN_SERIAL_NUMBER=$(echo "$DN" | grep -Po '(?<=\bserialNumber = )[a-f0-9-]+')
