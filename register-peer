@@ -140,7 +140,7 @@ mkdir "$DIR/peers" 2> /dev/null || true
 peer_dir="$DIR/peers/$DN_SERIAL_NUMBER"
 ca_file="$peer_dir/root-ca.crt"
 
-if ! openssl verify -CAfile "$ca_file" "$crt_file"; then
+if ! openssl verify -trusted "$ca_file" "$crt_file"; then
     invalid_certificate
 fi
 
