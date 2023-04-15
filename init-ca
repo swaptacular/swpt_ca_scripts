@@ -104,8 +104,10 @@ fi
 if [ ! -s nodeinfo/servers.txt ]; then
     echo
     echo 'You must specify the network address of your server(s). The network'
-    echo 'address consists of a domain name and a port number, separated by a colon.'
-    echo 'For example: "myserver.example.com:1234".'
+    echo 'address consists of a domain name and a port number, separated by a'
+    echo 'colon. For example: "myserver.example.com:1234". If you are unsure'
+    echo 'what to enter here, do not worry, whatever you enter now, you will'
+    echo 'be able to easily change later.'
     echo
     read -p 'Network address: ' server_address
     echo "$server_address" > nodeinfo/servers.txt
