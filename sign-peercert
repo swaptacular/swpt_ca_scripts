@@ -51,7 +51,7 @@ function can_not_reserve_subnet {
 
 function verify_root_crt_files {
     echo
-    echo 'Checking the self-signed certificate...'
+    echo 'Verifying the self-signed certificate...'
     cert_count=0
     while openssl x509 -noout &> /dev/null; do
         cert_count=$((cert_count+1))
@@ -183,8 +183,8 @@ temp_dir=$(mktemp -d)
 trap delete_temp_dir EXIT
 
 unzip "$1" -d "$temp_dir"
-csr_file="$temp_dir/root-ca.csr"
-verify_root_crt_files "$temp_dir/root-ca.crt" "$csr_file"
+temp_csr_file="$temp_dir/root-ca.csr"
+verify_root_crt_files "$temp_dir/root-ca.crt" "$temp_csr_file"
 verify_nodeinfo "$temp_dir/nodeinfo.zip" "$temp_dir/nodeinfo.signature"
 echo
 unzip -d "$temp_dir/nodeinfo" "$temp_dir/nodeinfo.zip"
@@ -194,53 +194,72 @@ export DN_O=$(echo "$DN" | grep -Po '(?<=\bO = )[\sA-Za-z0-9-]+')
 export DN_OU=$(echo "$DN" | grep -Po '(?<=\bOU = )[\sA-Za-z0-9-]+')
 export DN_SERIAL_NUMBER=$(echo "$DN" | grep -Po '(?<=\bserialNumber = )[a-f0-9-]+')
 
+if [[ "$DN_SERIAL_NUMBER" == "$(cat "$DIR/db/nodeid")" ]]; then
+    invalid_node_type
+fi
+
 mkdir "$DIR/peers" 2> /dev/null || true
 peer_dir="$DIR/peers/$DN_SERIAL_NUMBER"
-
-if [[ "$DN_SERIAL_NUMBER" == "$(cat "$DIR/db/nodeid")" || -d "$peer_dir" ]]; then
-    # TODO: allow updates!
-    echo
-    echo 'ERROR: A certificate signing request from the Swaptacular node'
-    echo "       \"$DN_SERIAL_NUMBER\" has been approved already."
-    echo
-    echo '       Signing another certificate for the same Swaptacular node'
-    echo '       can not be allowed, because this can result in a serious'
-    echo '       security breach.'
-    exit 1
-fi
-
 peercert_filename=peercert.crt
-peercert_file="$temp_dir/$peercert_filename"
-echo
+peercert_file="$peer_dir/$peercert_filename"
 
-echo "$DN_OU" > "$temp_dir/nodetype.txt"
-subnet_file="$temp_dir/subnet.txt"
-save_subnet "$subnet_file"
-if [ -s "$subnet_file" ]; then
-    export SWPT_SUBNET="Subnet: $(cat "$subnet_file")"
+if [[ -d "$peer_dir" ]]; then
+    if [ ! -s "$peercert_file" ]; then
+        echo
+        echo "FATAL ERROR: $peercert_file is missing!"
+        exit 3;
+    fi
+    if cmp "$temp_dir/root-ca.crt" "$peer_dir/root-ca.crt"; then
+        new_date="$(cat "$temp_dir/nodeinfo/updated-at.txt" || true)"
+        if [[ -n "$new_date" ]]; then
+            old_date="$(cat "$peer_dir/nodeinfo/updated-at.txt" || true)"
+            if [[ -z "$old_date" || "$old_date" < "$new_date" ]]; then
+                echo
+                echo 'Updating nodeinfo...'
+                rm -rf "$peer_dir/nodeinfo"
+                cp -r "$temp_dir/nodeinfo" "$peer_dir"
+            fi
+        fi
+    else
+        echo
+        echo 'ERROR: A certificate signing request from the Swaptacular node'
+        echo "       \"$DN_SERIAL_NUMBER\" has been approved already."
+        echo
+        echo '       Signing another certificate for the same Swaptacular node'
+        echo '       can not be allowed, because this can result in a serious'
+        echo '       security breach.'
+        exit 1
+    fi
 fi
 
-openssl ca \
-    -config "$DIR/root-ca.conf" \
-    -in "$csr_file" \
-    -out "$peercert_file" \
-    -extensions sub_ca_ext
-
-if [ -s "$peercert_file" ]; then
-    rm "$csr_file"
-    mv "$temp_dir" "$peer_dir"
-
+if [ ! -s "$peercert_file" ]; then
+    temp_peercert_file="$temp_dir/$peercert_filename"
+    echo "$DN_OU" > "$temp_dir/nodetype.txt"
+    temp_subnet_file="$temp_dir/subnet.txt"
+    save_subnet "$temp_subnet_file"
+    if [ -s "$temp_subnet_file" ]; then
+        export SWPT_SUBNET="Subnet: $(cat "$temp_subnet_file")"
+    fi
     echo
-    echo '***********************************************************************'
-    echo '* IMPORTANT: A new peer certificate file has been created, containing *'
-    echo '*            the certificate that you just signed. You should send    *'
-    echo '*            this file to the owner of the Swaptacular node that made *'
-    echo '*            the certificate signing request.                         *'
-    echo '*                                                                     *'
-    echo '*            Also, do not forget to send your own request bundle      *'
-    echo '*            file as well (see the "create-reqbundle" command), so    *'
-    echo '*            that you too, could receive a peer certificate from your *'
-    echo '*            peer node.                                               *'
-    echo '***********************************************************************'
-    echo "File location: $peer_dir/$peercert_filename"
+    openssl ca \
+            -config "$DIR/root-ca.conf" \
+            -in "$temp_csr_file" \
+            -out "$temp_peercert_file" \
+            -extensions sub_ca_ext
+    [ -s "$temp_peercert_file" ] || exit 3;
+    rm "$temp_csr_file"
+    mv "$temp_dir" "$peer_dir"
 fi
+
+echo
+echo '***********************************************************************'
+echo '* IMPORTANT: A peer certificate file has been created. You should     *'
+echo '*            send this file to the owner of the Swaptacular node that *'
+echo '*            made the certificate signing request.                    *'
+echo '*                                                                     *'
+echo '*            Also, do not forget to send your own request bundle      *'
+echo '*            file as well (see the "create-reqbundle" command), so    *'
+echo '*            that you too, could receive a peer certificate from your *'
+echo '*            peer node.                                               *'
+echo '***********************************************************************'
+echo "File location: $peercert_file"

@@ -70,7 +70,7 @@ trap delete_temp_dir EXIT
 echo 'Creating nodeinfo.zip file...'
 pushd . > /dev/null
 cd "$DIR/nodeinfo"
-date -I > date.txt
+date -I > updated-at.txt
 zip -rX "$temp_dir/nodeinfo.zip" *
 popd > /dev/null
 echo
