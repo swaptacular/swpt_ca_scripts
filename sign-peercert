@@ -73,6 +73,21 @@ function verify_root_crt_files {
     fi
 }
 
+function verify_nodeinfo {
+    echo
+    echo "Verifying nodeinfo's signature..."
+    temp_pubkey_file=$(mktemp)
+    echo "$crt_pubkey" > "$temp_pubkey_file"
+    if ! openssl dgst -sha256 -verify "$temp_pubkey_file" -signature "$2" "$1" 2> /dev/null; then
+        echo
+        echo 'ERROR: The signature is invalid.'
+        echo
+        rm "$temp_pubkey_file"
+        exit 1
+    fi
+    rm "$temp_pubkey_file"
+}
+
 function reserve_subnet {
     subnet=
     subnet_dir="$1"
@@ -170,6 +185,10 @@ trap delete_temp_dir EXIT
 unzip "$1" -d "$temp_dir"
 csr_file="$temp_dir/root-ca.csr"
 verify_root_crt_files "$temp_dir/root-ca.crt" "$csr_file"
+verify_nodeinfo "$temp_dir/nodeinfo.zip" "$temp_dir/nodeinfo.signature"
+echo
+unzip -d "$temp_dir/nodeinfo" "$temp_dir/nodeinfo.zip"
+rm "$temp_dir/nodeinfo.zip" "$temp_dir/nodeinfo.signature"
 
 export DN_O=$(echo "$DN" | grep -Po '(?<=\bO = )[\sA-Za-z0-9-]+')
 export DN_OU=$(echo "$DN" | grep -Po '(?<=\bOU = )[\sA-Za-z0-9-]+')

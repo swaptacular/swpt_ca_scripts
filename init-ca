@@ -54,7 +54,7 @@ function ask_for_aa_serial_numbber {
 
 find_script_dir || exit 3
 cd "$DIR" || exit 3
-mkdir certs private db 2> /dev/null
+mkdir certs private db nodeinfo 2> /dev/null
 chmod 700 private
 touch db/index
 
@@ -99,6 +99,16 @@ if [ ! -s db/nodetype -o ! -s db/nodeid ]; then
                 ;;
         esac
     done
+fi
+
+if [ ! -s nodeinfo/servers.txt ]; then
+    echo
+    echo 'You must specify the network address of your server(s). The network'
+    echo 'address consists of a domain name and a port number, separated by a colon.'
+    echo 'For example: "myserver.example.com:1234".'
+    echo
+    read -p 'Network address: ' server_address
+    echo "$server_address" > nodeinfo/servers.txt
 fi
 
 if [ ! -s root-ca.conf ]; then
