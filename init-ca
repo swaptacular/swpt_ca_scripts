@@ -157,3 +157,25 @@ if [ ! -s root-ca.crt ]; then
     echo '***********************************************************************'
     echo "File location: $DIR/root-ca.crt"
 fi
+
+# Sometimes a subnet lock file is created, but a corresponding peer is not
+# created. With the limited number of debtor subnets (256), this can become
+# a problem. Here we try to find broken subnet lock files and remove them.
+if [ -s "subnets/debtors/SEQNUM" ]; then
+    for fullname in subnets/debtors/*;
+    do
+        name="$(basename "$fullname")"
+        if [[ "$name" != "SEQNUM" ]]; then
+            node_id="$(cat "$fullname")"
+            noed_subnet="$(cat "peers/$node_id/subnet.txt" 2> /dev/null)"
+            if [[ "$name" != "subnet" ]]; then
+                released_subnet=yes
+                echo "Releasing allocated subnet: $fullname"
+                rm "$fullname"
+            fi
+        fi
+    done
+    if [[ -n "$released_subnet" ]]; then
+        echo "-1" > subnets/debtors/SEQNUM
+    fi
+fi
