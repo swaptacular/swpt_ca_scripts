@@ -30,6 +30,7 @@ function delete_temp_dir {
 find_script_dir || exit 3
 
 if [ ! -s "$DIR/root-ca.csr" ]; then
+    echo
     echo 'To be able to set up permanent authenticated connections with other'
     echo 'Swaptacular nodes, a certificate signing request (CSR) must be'
     echo 'created first.'
@@ -39,10 +40,8 @@ if [ ! -s "$DIR/root-ca.csr" ]; then
             -out "$DIR/root-ca.csr" \
             -key "$DIR/private/root-ca.key" \
             -reqexts ca_official_ext
-    openssl req \
-            -in "$DIR/root-ca.csr" \
-            -text \
-            -noout
+    [ -s "$DIR/root-ca.csr" ] || exit 3;
+    echo 'Successfully created a certificate signing request.'
     echo
 fi
 
@@ -75,7 +74,10 @@ zip -rX "$temp_dir/nodeinfo.zip" *
 popd > /dev/null
 echo
 
-echo 'Creating a digital signature...'
+echo 'The contents of the "nodeinfo" directory has been packaged into a "zip"'
+echo 'file. This file should be digitally signed and included in the'
+echo 'request bundle...'
+echo
 openssl dgst -sha256 \
     -sign "$DIR/private/root-ca.key" \
     -out "$temp_dir/nodeinfo.signature" \
