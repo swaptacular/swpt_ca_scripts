@@ -52,6 +52,32 @@ function ask_for_aa_serial_numbber {
     echo $aa_prefix > db/nodeid
 }
 
+function release_unused_debtor_subnets {
+    # Sometimes a subnet lock file is created, but a corresponding peer is
+    # not created. With the limited number of debtor subnets (256), this can
+    # become a problem. Here we try to find broken subnet lock files and
+    # remove them.
+    if [ -s "subnets/debtors/SEQNUM" ]; then
+        for fullname in subnets/debtors/*;
+        do
+            name="$(basename "$fullname")"
+            if [[ "$name" != "SEQNUM" ]]; then
+                node_id="$(cat "$fullname")"
+                node_subnet="$(cat "peers/$node_id/subnet.txt" 2> /dev/null || true)"
+                if [[ "$name" != "$node_subnet" ]]; then
+                    released_subnet=yes
+                    rm "$fullname"
+                    echo "Released unused subnet: $fullname"
+                fi
+            fi
+        done
+        if [[ -n "$released_subnet" ]]; then
+            echo "-1" > subnets/debtors/SEQNUM
+            echo 'Rebooted subnet counter: subnets/debtors/SEQNUM'
+        fi
+    fi
+}
+
 find_script_dir || exit 3
 cd "$DIR" || exit 3
 mkdir certs private db nodeinfo 2> /dev/null
@@ -59,6 +85,7 @@ chmod 700 private
 touch db/index
 
 set -e
+release_unused_debtor_subnets
 
 if [ ! -s db/serial ]; then
     openssl rand -hex 16  > db/serial
@@ -156,27 +183,4 @@ if [ ! -s root-ca.crt ]; then
     echo '*            SSL connections with other Swaptacular nodes.            *'
     echo '***********************************************************************'
     echo "File location: $DIR/root-ca.crt"
-fi
-
-# Sometimes a subnet lock file is created, but a corresponding peer is not
-# created. With the limited number of debtor subnets (256), this can become
-# a problem. Here we try to find broken subnet lock files and remove them.
-if [ -s "subnets/debtors/SEQNUM" ]; then
-    for fullname in subnets/debtors/*;
-    do
-        name="$(basename "$fullname")"
-        if [[ "$name" != "SEQNUM" ]]; then
-            node_id="$(cat "$fullname")"
-            node_subnet="$(cat "peers/$node_id/subnet.txt" 2> /dev/null || true)"
-            if [[ "$name" != "$node_subnet" ]]; then
-                released_subnet=yes
-                rm "$fullname"
-                echo "Released unused subnet: $fullname"
-            fi
-        fi
-    done
-    if [[ -n "$released_subnet" ]]; then
-        echo "-1" > subnets/debtors/SEQNUM
-        echo 'Rebooted subnet counter: subnets/debtors/SEQNUM'
-    fi
 fi
