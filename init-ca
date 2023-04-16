@@ -3,9 +3,9 @@
 if [[ "$#" != 0 ]]; then
     echo 'Initialises the root-CA database. Should be run once, in the beginning.'
     echo
-    echo 'NOTE: It should be safe to run this command on an already initialised'
-    echo '      database. In this case, it will try to find typical problems'
-    echo '      in the existing database, and fix them.'
+    echo 'NOTE: Generally, it should be safe to run this command on an already'
+    echo '      initialised database. In this case, it will try to find typical'
+    echo '      problems in the existing database, and fix them.'
     echo
     echo 'Usage: init-ca'
     exit 2
