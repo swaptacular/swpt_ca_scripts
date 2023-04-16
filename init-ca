@@ -46,6 +46,7 @@ function generate_conf_file {
 }
 
 function ask_for_aa_serial_numbber {
+    echo
     while read -p 'Enter your accounting authority prefix (8 hexadecimals): ' aa_prefix
     do
         if echo "$aa_prefix" | grep -E '^[0-9a-f]{8}$' > /dev/null; then
@@ -78,6 +79,7 @@ function release_unused_debtor_subnets {
         if [[ -n "$released_subnet" ]]; then
             echo "-1" > subnets/debtors/SEQNUM
             echo 'Rebooted subnet counter: subnets/debtors/SEQNUM'
+            echo
         fi
     fi
 }
@@ -100,6 +102,7 @@ if [ ! -s db/crlnumber ]; then
 fi
 
 if [ ! -s db/nodetype -o ! -s db/nodeid ]; then
+    echo
     PS3="Specify the type of your Swaptacular node: "
     select opt in "Creditors agent" "Debtors agent" "Accounting authority"
     do
@@ -141,6 +144,7 @@ if [ ! -s nodeinfo/servers.txt ]; then
     echo 'be able to easily change later.'
     echo
     read -p 'Network address: ' server_address
+    echo
     echo "$server_address" > nodeinfo/servers.txt
 fi
 
@@ -162,15 +166,19 @@ if [ ! -s private/root-ca.key ]; then
 fi
 
 if [ ! -s root-ca.crt ]; then
-    echo
-    echo "Creating a self-signed certificate for your root CA..."
     if [ ! -s "$self_csr" ]; then
+        echo
+        echo 'A certificate signing request (CSR) must be created for your root CA.'
         openssl req -new \
                 -config root-ca.conf \
                 -out "$self_csr" \
                 -key private/root-ca.key \
                 -reqexts ca_ext
+        [ -s "$self_csr" ] || exit 3;
+        echo 'Successfully created a certificate signing request.'
     fi
+    echo
+    echo "A self-signed certificate must be created for your root CA."
     openssl ca -selfsign \
             -config root-ca.conf \
             -in "$self_csr" \
