@@ -167,15 +167,16 @@ if [ -s "subnets/debtors/SEQNUM" ]; then
         name="$(basename "$fullname")"
         if [[ "$name" != "SEQNUM" ]]; then
             node_id="$(cat "$fullname")"
-            noed_subnet="$(cat "peers/$node_id/subnet.txt" 2> /dev/null)"
-            if [[ "$name" != "subnet" ]]; then
+            node_subnet="$(cat "peers/$node_id/subnet.txt" 2> /dev/null || true)"
+            if [[ "$name" != "$node_subnet" ]]; then
                 released_subnet=yes
-                echo "Releasing allocated subnet: $fullname"
                 rm "$fullname"
+                echo "Released unused subnet: $fullname"
             fi
         fi
     done
     if [[ -n "$released_subnet" ]]; then
         echo "-1" > subnets/debtors/SEQNUM
+        echo 'Rebooted subnet counter: subnets/debtors/SEQNUM'
     fi
 fi
