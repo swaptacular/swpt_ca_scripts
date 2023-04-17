@@ -2,9 +2,10 @@
 set -e
 
 if [[ "$#" != 1 || "$1" == "--help" ]]; then
-    echo 'Generates a server public/private key pair, and a corresponding'
-    echo 'certificate signing request. The passed FILENAME should not have'
-    echo 'a file-name extension.'
+    echo 'Generates an unencrypted public/private key pair, plus a corresponding'
+    echo 'certificate signing request. The passed FILENAME should not have a'
+    echo 'file-name extension. The names of the generated files will be'
+    echo '"FILENAME.key" and "FILENAME.csr".'
     echo
     echo 'Usage: generate-serverkey FILENAME'
     exit 2

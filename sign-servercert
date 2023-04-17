@@ -2,7 +2,7 @@
 
 if [[ "$#" != 1 && "$#" != 2 || "$1" == "--help" ]]; then
     echo 'Generates a certificate file from a certificate signing request (CSR)'
-    echo 'file. The CSR file should be created by/for your own server(s), using'
+    echo 'file. The CSR file should be created by/for your server(s), using'
     echo 'a secret private key. The generated certificate can be used by your'
     echo 'server(s) to establish secure SSL connections with other Swaptacular'
     echo 'servers. See the "generate-serverkey" command.'

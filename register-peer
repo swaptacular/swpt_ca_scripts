@@ -2,8 +2,13 @@
 set -e
 
 if [[ "$#" != 1 || "$1" == "--help" ]]; then
-    echo 'Reads a peer certificate file and updates the contents of the'
-    echo '"peers" directory accordingly.'
+    echo 'Verifies a peer certificate file and stores it. The peer certificate'
+    echo 'file should be created and sent to you by another Swaptacular node,'
+    echo 'which wants to establish a permanent authenticated connection with'
+    echo 'your Swaptacular node. See the "sign-peercert" command.'
+    echo
+    echo 'NOTE: If this command is executed for an already established peer,'
+    echo '      it will only try to verify the passed certificate file.'
     echo
     echo 'Usage: register-peer PEERCERT_FILE'
     exit 2
@@ -75,10 +80,10 @@ function verify_issuer {
         echo
         echo "ERROR: Unknown peer node \"$DN_SERIAL_NUMBER\"".
         echo
-        echo '       To be able to register a peer node, first you need to receive'
-        echo '       a request bundle from the owner of the Swaptacular node, and then'
-        echo '       use the "sign-peercert" command to create and send a certificate'
-        echo '       for your peer.'
+        echo '       To successfully register a peer, first you need to receive a'
+        echo '       request bundle from the owner of the other Swaptacular node. Then'
+        echo '       you should use the "sign-peercert" command, to create a peer'
+        echo '       certificate for your peer.'
         exit 1
     fi
 }

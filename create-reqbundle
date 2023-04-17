@@ -1,16 +1,6 @@
 #!/bin/bash
 set -e
 
-if [[ "$#" != 1 || "$1" == "--help" ]]; then
-    echo 'Creates a request bundle file (a .zip file). All files and'
-    echo 'sub-directories that the "nodeinfo" directory contains, will be added'
-    echo 'to the created bundle. Those files may contain additional information'
-    echo 'about your Swaptacular node.'
-    echo
-    echo 'Usage: create-reqbundle BUNDLE_FILENAME[.zip]'
-    exit 2
-fi
-
 function find_script_dir {
     SOURCE=${BASH_SOURCE[0]}
     while [ -L "$SOURCE" ]; do # resolve $SOURCE until the file is not a symlink
@@ -28,6 +18,16 @@ function delete_temp_dir {
 }
 
 find_script_dir || exit 3
+
+if [[ "$#" != 1 || "$1" == "--help" ]]; then
+    echo 'Creates a request bundle file (a "zip" file). All files and'
+    echo "sub-directories that the $DIR/nodeinfo"
+    echo 'directory contains, will be included in the created bundle. Those files'
+    echo 'may contain additional information about your Swaptacular node.'
+    echo
+    echo 'Usage: create-reqbundle BUNDLE_FILENAME[.zip]'
+    exit 2
+fi
 
 if [ ! -s "$DIR/root-ca.csr" ]; then
     echo
