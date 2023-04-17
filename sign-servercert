@@ -38,9 +38,9 @@ if [ -s "$crt_file" ]; then
 fi
 
 DN=$(openssl req -noout -subject -in "$csr_file")
-DN_O=$(echo "$DN" | grep -Po '(?<=\bO = )[\sA-Za-z0-9-]+')
-DN_OU=$(echo "$DN" | grep -Po '(?<=\bOU = )[\sA-Za-z0-9-]+')
-DN_SERIAL_NUMBER=$(echo "$DN" | grep -Po '(?<=\bserialNumber = )[a-f0-9-]+')
+DN_O=$(echo "$DN" | grep -Po '(?<=\bO = )[\sA-Za-z0-9-]+' || true)
+DN_OU=$(echo "$DN" | grep -Po '(?<=\bOU = )[\sA-Za-z0-9-]+' || true)
+DN_SERIAL_NUMBER=$(echo "$DN" | grep -Po '(?<=\bserialNumber = )[a-f0-9-]+' || true)
 
 set -e
 
@@ -55,6 +55,7 @@ if [[ "$DN_O" != "Swaptacular Nodes Registry" || \
     exit 1
 fi
 
+echo "Signing server certificate..."
 openssl ca \
     -config "$DIR/root-ca.conf" \
     -in "$csr_file" \
