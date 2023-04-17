@@ -59,21 +59,13 @@ function verify_root_crt_files {
     while openssl x509 -noout &> /dev/null; do
         cert_count=$((cert_count+1))
     done < "$1"
-    if [[ "$cert_count" != 1 ]]; then
-        invalid_certificate
-    fi
+    [[ "$cert_count" == 1 ]] || invalid_certificate
     crt_pubkey="$(openssl x509 -in "$1" -noout -pubkey)"
     csr_pubkey="$(openssl req -in "$2" -noout -pubkey)"
-    if [[ "$crt_pubkey" != "$csr_pubkey" ]]; then
-        invalid_certificate
-    fi
+    [[ "$crt_pubkey" == "$csr_pubkey" ]] || invalid_certificate
     DN=$(openssl req -in "$2" -noout -subject )
-    if [[ "$DN" != "$(openssl x509 -in "$1" -noout -subject)" ]]; then
-        invalid_certificate
-    fi
-    if ! openssl verify -check_ss_sig -trusted "$1" "$1"; then
-        invalid_certificate
-    fi
+    [[ "$DN" == "$(openssl x509 -in "$1" -noout -subject)" ]] || invalid_certificate
+    openssl verify -check_ss_sig -trusted "$1" "$1" || invalid_certificate
 }
 
 function verify_nodeinfo {
@@ -143,30 +135,20 @@ function save_subnet {
     case "$(cat "$DIR/db/nodetype")" in
         "Creditors Agents")
             # Creditors agents do not allocate subnets.
-            if [[ "$DN_OU" != "Accounting Authorities" ]]; then
-                invalid_node_type
-            fi
+            [[ "$DN_OU" == "Accounting Authorities" ]] || invalid_node_type
             ;;
         "Debtors Agents")
             # Debtors agents are allowed to have only one peer.
-            if [[ "$DN_OU" != "Accounting Authorities" ]]; then
-                invalid_node_type
-            fi
-            if ! reserve_exclusive_subnet "$DN_SERIAL_NUMBER"; then
-                can_not_reserve_subnet
-            fi
+            [[ "$DN_OU" == "Accounting Authorities" ]] || invalid_node_type
+            reserve_exclusive_subnet "$DN_SERIAL_NUMBER" || can_not_reserve_subnet
             ;;
         "Accounting Authorities")
             case "$DN_OU" in
                 "Creditors Agents")
-                    if ! reserve_creditor_subnet "$DN_SERIAL_NUMBER"; then
-                        can_not_reserve_subnet
-                    fi
+                    reserve_creditor_subnet "$DN_SERIAL_NUMBER" || can_not_reserve_subnet
                     ;;
                 "Debtors Agents")
-                    if ! reserve_debtor_subnet "$DN_SERIAL_NUMBER"; then
-                        can_not_reserve_subnet
-                    fi
+                    reserve_debtor_subnet "$DN_SERIAL_NUMBER" || can_not_reserve_subnet
                     ;;
                 *)
                     invalid_node_type
@@ -193,13 +175,14 @@ echo
 unzip -d "$temp_dir/nodeinfo" "$temp_dir/nodeinfo.zip"
 rm "$temp_dir/nodeinfo.zip" "$temp_dir/nodeinfo.signature"
 
-export DN_O=$(echo "$DN" | grep -Po '(?<=\bO = )[\sA-Za-z0-9-]+')
-export DN_OU=$(echo "$DN" | grep -Po '(?<=\bOU = )[\sA-Za-z0-9-]+')
-export DN_SERIAL_NUMBER=$(echo "$DN" | grep -Po '(?<=\bserialNumber = )[a-f0-9-]+')
+export DN_O=$(echo "$DN" | grep -Po '(?<=\bO = )[\sA-Za-z0-9-]+' || true)
+export DN_OU=$(echo "$DN" | grep -Po '(?<=\bOU = )[\sA-Za-z0-9-]+' || true)
+export DN_SERIAL_NUMBER=$(echo "$DN" | grep -Po '(?<=\bserialNumber = )[a-f0-9-]+' || true)
 
-if [[ "$DN_SERIAL_NUMBER" == "$(cat "$DIR/db/nodeid")" ]]; then
-    invalid_node_type
-fi
+[[ -n "$DN_O" ]] || invalid_node_type
+[[ -n "$DN_OU" ]] || invalid_node_type
+[[ -n "$DN_SERIAL_NUMBER" ]] || invalid_node_type
+[[ "$DN_SERIAL_NUMBER" != "$(cat "$DIR/db/nodeid")" ]] || invalid_node_type
 
 mkdir "$DIR/peers" 2> /dev/null || true
 peer_dir="$DIR/peers/$DN_SERIAL_NUMBER"
