@@ -7,7 +7,7 @@ if [[ "$#" != 1 && "$#" != 2 || "$1" == "--help" ]]; then
     echo '"leaf" certificate by your server(s), to establish secure SSL connections'
     echo 'with other Swaptacular servers. See the "generate-serverkey" command.'
     echo
-    echo 'DAYS is the number of days of certificate validity (356 by default).'
+    echo 'DAYS is the number of days of certificate validity (365 by default).'
     echo
     echo 'Usage: sign-servercert CSR_FILE [DAYS]'
     exit 2
