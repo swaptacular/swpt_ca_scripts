@@ -116,7 +116,7 @@ if [ ! -s db/nodetype -o ! -s db/nodeid ]; then
     do
         case $opt in
             "Creditors agent")
-                echo "00000001" > subnet.txt
+                echo "00000001" > creditors-subnet.txt
                 echo "Creditors Agents" > db/nodetype
                 echo $(uuidgen) > db/nodeid
                 break
