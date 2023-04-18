@@ -46,7 +46,7 @@ fi
 openssl req \
     -new \
     -nodes \
-    -config "$DIR/root-ca.conf" \
+    -config "$DIR/db/root-ca.conf" \
     -out "$csr_file" \
     -keyout "$key_file" \
     -reqexts server_official_ext

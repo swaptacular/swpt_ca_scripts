@@ -229,7 +229,7 @@ if [ ! -s "$peercert_file" ]; then
     echo
     echo "Signing peer's certificate..."
     openssl ca \
-            -config "$DIR/root-ca.conf" \
+            -config "$DIR/db/root-ca.conf" \
             -in "$temp_csr_file" \
             -out "$temp_peercert_file" \
             -extensions sub_ca_ext

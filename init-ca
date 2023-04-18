@@ -50,7 +50,7 @@ function generate_conf_file {
     export SERIAL_NUMBER=$(cat db/nodeid)
     envsubst '$ORGANIZATIONAL_UNIT_NAME $SERIAL_NUMBER' \
              < root-ca.conf.template \
-             > root-ca.conf
+             > db/root-ca.conf
 }
 
 function ask_for_aa_serial_numbber {
@@ -156,7 +156,7 @@ if [ ! -s nodeinfo/servers.txt ]; then
     echo "$server_address" > nodeinfo/servers.txt
 fi
 
-if [ ! -s root-ca.conf ]; then
+if [ ! -s db/root-ca.conf ]; then
     generate_conf_file
 fi
 
@@ -167,7 +167,7 @@ trap delete_self_csr EXIT
 if [ ! -s private/root-ca.key ]; then
     rm -f root-ca.crt
     openssl req -new \
-            -config root-ca.conf \
+            -config db/root-ca.conf \
             -out "$self_csr" \
             -keyout private/root-ca.key \
             -reqexts ca_ext
@@ -178,7 +178,7 @@ if [ ! -s root-ca.crt ]; then
         echo
         echo 'A certificate signing request (CSR) must be created for your root CA.'
         openssl req -new \
-                -config root-ca.conf \
+                -config db/root-ca.conf \
                 -out "$self_csr" \
                 -key private/root-ca.key \
                 -reqexts ca_ext
@@ -188,7 +188,7 @@ if [ ! -s root-ca.crt ]; then
     echo
     echo "A self-signed certificate must be created for your root CA."
     openssl ca -selfsign \
-            -config root-ca.conf \
+            -config db/root-ca.conf \
             -in "$self_csr" \
             -out root-ca.crt \
             -extensions ca_ext

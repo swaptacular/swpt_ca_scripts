@@ -36,7 +36,7 @@ if [ ! -s "$DIR/root-ca.csr" ]; then
     echo 'created first.'
     echo
     openssl req -new \
-            -config "$DIR/root-ca.conf" \
+            -config "$DIR/db/root-ca.conf" \
             -out "$DIR/root-ca.csr" \
             -key "$DIR/private/root-ca.key" \
             -reqexts ca_official_ext
