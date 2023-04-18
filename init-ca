@@ -33,6 +33,14 @@ function find_script_dir {
     DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
 }
 
+function generate_serial_number {
+    # TODO: Use this instead of uuidgen.
+    echo $(openssl x509 -noout -pubkey -in "$1" |
+        openssl pkey -pubin -outform DER |
+        openssl dgst -sha256 -binary |
+        hexdump -n 16 -ve '/1 "%02x"')
+}
+
 function delete_self_csr {
     rm -f "$self_csr"
 }
