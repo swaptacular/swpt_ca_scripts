@@ -113,11 +113,11 @@ function reserve_subnet {
 }
 
 function reserve_creditor_subnet {
-    reserve_subnet "$DIR/subnets/creditors" 8 "$1"
+    reserve_subnet "$DIR/db/subnets/creditors" 8 "$1"
 }
 
 function reserve_debtor_subnet {
-    reserve_subnet "$DIR/subnets/debtors" 2 "$1" "$(cat "$DIR/db/nodeid")"
+    reserve_subnet "$DIR/db/subnets/debtors" 2 "$1" "$(cat "$DIR/db/nodeid")"
 }
 
 function reserve_exclusive_subnet {

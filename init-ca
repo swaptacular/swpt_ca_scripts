@@ -70,8 +70,8 @@ function release_unused_debtor_subnets {
     # not created. With the limited number of debtor subnets (256), this can
     # become a problem. Here we try to find broken subnet lock files and
     # remove them.
-    if [ -s "subnets/debtors/SEQNUM" ]; then
-        for fullname in subnets/debtors/*;
+    if [ -s "db/subnets/debtors/SEQNUM" ]; then
+        for fullname in db/subnets/debtors/*;
         do
             name="$(basename "$fullname")"
             if [[ "$name" != "SEQNUM" ]]; then
@@ -85,8 +85,8 @@ function release_unused_debtor_subnets {
             fi
         done
         if [[ -n "$released_subnet" ]]; then
-            echo "-1" > subnets/debtors/SEQNUM
-            echo 'Rebooted subnet counter: subnets/debtors/SEQNUM'
+            echo "-1" > db/subnets/debtors/SEQNUM
+            echo 'Rebooted subnet counter: db/subnets/debtors/SEQNUM'
             echo
         fi
     fi
@@ -128,11 +128,11 @@ if [ ! -s db/nodetype -o ! -s db/nodeid ]; then
                 ;;
             "Accounting authority")
                 echo "Accounting Authorities" > db/nodetype
-                mkdir subnets 2> /dev/null || true
-                mkdir subnets/debtors 2> /dev/null || true
-                mkdir subnets/creditors 2> /dev/null || true
-                echo "-1" > subnets/debtors/SEQNUM
-                echo "0" > subnets/creditors/SEQNUM
+                mkdir db/subnets 2> /dev/null || true
+                mkdir db/subnets/debtors 2> /dev/null || true
+                mkdir db/subnets/creditors 2> /dev/null || true
+                echo "-1" > db/subnets/debtors/SEQNUM
+                echo "0" > db/subnets/creditors/SEQNUM
                 ask_for_aa_serial_numbber
                 break
                 ;;
