@@ -165,7 +165,7 @@ trap delete_self_csr EXIT
 
 
 if [ ! -s private/root-ca.key ]; then
-    rm -f root-ca.crt
+    rm -f root-ca.crt root-ca.csr
     openssl req -new \
             -config db/root-ca.conf \
             -out "$self_csr" \
