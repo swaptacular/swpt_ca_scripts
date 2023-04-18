@@ -1,7 +1,12 @@
 #!/bin/bash
+set -e
+set -o pipefail
 
 if [[ "$#" != 0 ]]; then
-    echo 'Initialises the root-CA database. Should be run once, in the beginning.'
+    echo 'Initialises the database for the certificate authority (CA). This'
+    echo 'command should be run once in the beginning, after the public/private'
+    echo 'key pair for the CA has been generated. See the "generate-masterkey"'
+    echo 'command.'
     echo
     echo 'NOTE: Generally, it should be safe to run this command on an already'
     echo '      initialised database. In this case, it will try to find typical'
@@ -11,7 +16,7 @@ if [[ "$#" != 0 ]]; then
     exit 2
 fi
 
-for dependency in openssl envsubst uuidgen cmp flock printf zip unzip date
+for dependency in openssl envsubst cmp flock printf zip unzip date
 do
     if ! which "$dependency" &> /dev/null; then
         echo
@@ -33,12 +38,16 @@ function find_script_dir {
     DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
 }
 
-function generate_serial_number {
-    # TODO: Use this instead of uuidgen.
-    echo $(openssl x509 -noout -pubkey -in "$1" |
+function generate_serial_numbber {
+    echo
+    echo 'Every Swaptacular node has an unique ID. The ID for your Swaptacular'
+    echo 'node will be automatically generated from the public key of your'
+    echo 'certificate authority...'
+    serial_numbber=$(openssl rsa -in "$key_file" -pubout |
         openssl pkey -pubin -outform DER |
         openssl dgst -sha256 -binary |
         hexdump -n 16 -ve '/1 "%02x"')
+    echo "$serial_numbber" > db/nodeid
 }
 
 function delete_self_csr {
@@ -60,6 +69,7 @@ function ask_for_aa_serial_numbber {
         if echo "$aa_prefix" | grep -E '^[0-9a-f]{8}$' > /dev/null; then
             break
         fi
+        echo
         echo "An invalid accounting authority prefix has been entered."
     done
     echo $aa_prefix > db/nodeid
@@ -93,21 +103,22 @@ function release_unused_debtor_subnets {
 }
 
 find_script_dir || exit 3
-cd "$DIR" || exit 3
-mkdir certs private db nodeinfo 2> /dev/null
-chmod 700 private
+key_file="$DIR/private/root-ca.key"
+if [ ! -s "$key_file" ]; then
+    echo
+    echo "ERROR: $key_file file does not exist."
+    echo
+    echo '       Before initialising the CA database, an encrypted public/private'
+    echo '       key pair should be generated. See the "generate-masterkey" command.'
+    exit 1
+fi
+
+cd "$DIR"
+mkdir certs db nodeinfo 2> /dev/null || true
 touch db/index
-
-set -e
+[ -s db/serial ] || openssl rand -hex 16  > db/serial
+[ ! -s db/crlnumber ] || echo 1001 > db/crlnumber
 release_unused_debtor_subnets
-
-if [ ! -s db/serial ]; then
-    openssl rand -hex 16  > db/serial
-fi
-
-if [ ! -s db/crlnumber ]; then
-    echo 1001 > db/crlnumber
-fi
 
 if [ ! -s db/nodetype -o ! -s db/nodeid ]; then
     echo
@@ -118,12 +129,12 @@ if [ ! -s db/nodetype -o ! -s db/nodeid ]; then
             "Creditors agent")
                 echo "00000001" > creditors-subnet.txt
                 echo "Creditors Agents" > db/nodetype
-                echo $(uuidgen) > db/nodeid
+                generate_serial_numbber
                 break
                 ;;
             "Debtors agent")
                 echo "Debtors Agents" > db/nodetype
-                echo $(uuidgen) > db/nodeid
+                generate_serial_numbber
                 break
                 ;;
             "Accounting authority")
@@ -137,11 +148,14 @@ if [ ! -s db/nodetype -o ! -s db/nodeid ]; then
                 break
                 ;;
             *)
-                echo "Invalid option $REPLY"
+                echo
+                echo "Invalid option: $REPLY"
                 ;;
         esac
     done
 fi
+
+[ -s db/root-ca.conf ] || generate_conf_file
 
 if [ ! -s nodeinfo/servers.txt ]; then
     echo
@@ -156,37 +170,20 @@ if [ ! -s nodeinfo/servers.txt ]; then
     echo "$server_address" > nodeinfo/servers.txt
 fi
 
-if [ ! -s db/root-ca.conf ]; then
-    generate_conf_file
-fi
-
-self_csr=$(mktemp)
-trap delete_self_csr EXIT
-
-
-if [ ! -s private/root-ca.key ]; then
-    rm -f root-ca.crt root-ca.csr
+if [ ! -s root-ca.crt ]; then
+    echo
+    echo 'A certificate signing request (CSR) must be created for your CA...'
+    self_csr=$(mktemp)
+    trap delete_self_csr EXIT
     openssl req -new \
             -config db/root-ca.conf \
             -out "$self_csr" \
-            -keyout private/root-ca.key \
+            -key private/root-ca.key \
             -reqexts ca_ext
-fi
-
-if [ ! -s root-ca.crt ]; then
-    if [ ! -s "$self_csr" ]; then
-        echo
-        echo 'A certificate signing request (CSR) must be created for your root CA.'
-        openssl req -new \
-                -config db/root-ca.conf \
-                -out "$self_csr" \
-                -key private/root-ca.key \
-                -reqexts ca_ext
-        [ -s "$self_csr" ] || exit 3;
-        echo 'Successfully created a certificate signing request.'
-    fi
+    [ -s "$self_csr" ] || exit 3;
+    echo 'Successfully created a certificate signing request.'
     echo
-    echo "A self-signed certificate must be created for your root CA."
+    echo "A self-signed certificate must be created for your CA..."
     openssl ca -selfsign \
             -config db/root-ca.conf \
             -in "$self_csr" \
