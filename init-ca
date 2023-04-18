@@ -64,15 +64,22 @@ function generate_conf_file {
 
 function ask_for_aa_serial_numbber {
     echo
+    echo 'Debtor IDs are 64-bit numbers. Every accounting authority is responsible'
+    echo 'for a specific range of debtor IDs. The "accounting authority prefix"'
+    echo 'defines this range, and consists of exactly 8 hexadecimal symbols'
+    echo '(32-bits). For example, if the accounting authority prefix is "0abcdef1",'
+    echo 'the accounting authority would be responsible for debtor IDs from'
+    echo '"0abcdef100000000" to "0abcdef1ffffffff".'
+    echo
     while read -p 'Enter your accounting authority prefix (8 hexadecimals): ' aa_prefix
     do
-        if echo "$aa_prefix" | grep -E '^[0-9a-f]{8}$' > /dev/null; then
+        if echo "$aa_prefix" | grep -E '^[0-9a-fA-F]{8}$' > /dev/null; then
             break
         fi
         echo
         echo "An invalid accounting authority prefix has been entered."
     done
-    echo $aa_prefix > db/nodeid
+    echo $aa_prefix | tr '[:upper:]' '[:lower:]' > db/nodeid
 }
 
 function release_unused_debtor_subnets {
