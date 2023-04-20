@@ -153,7 +153,6 @@ else
         "Debtors Agents")
             [[ -n "$subnet" ]] || invalid_certificate
             echo "$subnet" | grep -P "^${DN_SERIAL_NUMBER}" || invalid_certificate
-            echo "$subnet" > "$peer_dir/subnet.txt"
             echo "$subnet" > "$DIR/debtors-subnet.txt"
             ;;
     esac
