@@ -29,7 +29,7 @@ if [[ "$#" != 1 || "$1" == "--help" ]]; then
     exit 2
 fi
 
-if [ ! -s "$DIR/root-ca.csr" ]; then
+if [ ! -s "$DIR/db/root-ca.csr" ]; then
     echo
     echo 'To be able to set up permanent authenticated connections with other'
     echo 'Swaptacular nodes, a certificate signing request (CSR) must be'
@@ -37,10 +37,10 @@ if [ ! -s "$DIR/root-ca.csr" ]; then
     echo
     openssl req -new \
             -config "$DIR/db/root-ca.conf" \
-            -out "$DIR/root-ca.csr" \
+            -out "$DIR/db/root-ca.csr" \
             -key "$DIR/private/root-ca.key" \
             -reqexts ca_official_ext
-    [ -s "$DIR/root-ca.csr" ] || exit 3;
+    [ -s "$DIR/db/root-ca.csr" ] || exit 3;
     echo 'Successfully created a certificate signing request.'
     echo
 fi
@@ -53,7 +53,7 @@ if [ -s "$bundle_file" ]; then
     exit 1
 fi
 
-required_files=("$DIR/root-ca.crt" "$DIR/root-ca.csr")
+required_files=("$DIR/root-ca.crt" "$DIR/db/root-ca.csr")
 for file in ${required_files[@]} "$DIR/nodeinfo/servers.txt"; do
     if [ ! -f "$file" ]; then
         echo
