@@ -187,7 +187,7 @@ rm "$temp_dir/nodeinfo.zip" "$temp_dir/nodeinfo.signature"
 
 export DN_O=$(echo "$DN" | grep -Po '(?<=\bO = )[\sA-Za-z0-9-]+' || true)
 export DN_OU=$(echo "$DN" | grep -Po '(?<=\bOU = )[\sA-Za-z0-9-]+' || true)
-export DN_SERIAL_NUMBER=$(echo "$DN" | grep -Po '(?<=\bserialNumber = )[a-f0-9-]+' || true)
+export DN_SERIAL_NUMBER=$(echo "$DN" | grep -Po '(?<=\bserialNumber = )[a-f0-9]+' || true)
 
 [[ "$DN_O" == "Swaptacular Nodes Registry" ]] || invalid_certificate
 [[ -n "$DN_OU" ]] || invalid_node_type
