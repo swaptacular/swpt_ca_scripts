@@ -44,6 +44,7 @@ echo '*            and stored in a file. Make sure that you do not lose     *'
 echo '*            this file, and its content is always kept secret.        *'
 echo '*                                                                     *'
 echo '*            You may use the "init-ca" command to initialise your     *'
-echo '*            certificate authority.                                   *'
+echo '*            certificate authority. To view your public key, run      *'
+echo '*            "openssl rsa -pubout -in private/root-ca.key".           *'
 echo '***********************************************************************'
 echo "File location: $key_file"
