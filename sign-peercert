@@ -122,7 +122,7 @@ function reserve_subnet {
 }
 
 function reserve_creditor_subnet {
-    reserve_subnet "$DIR/db/subnets/creditors" 8 "$1"
+    reserve_subnet "$DIR/db/subnets/creditors" 6 "$1"
 }
 
 function reserve_debtor_subnet {

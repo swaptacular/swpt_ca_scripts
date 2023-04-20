@@ -134,7 +134,7 @@ if [ ! -s db/nodetype -o ! -s db/nodeid ]; then
     do
         case $opt in
             "Creditors agent")
-                echo "00000001" > creditors-subnet.txt
+                echo "000001" > creditors-subnet.txt
                 echo "Creditors Agents" > db/nodetype
                 generate_serial_numbber
                 break
