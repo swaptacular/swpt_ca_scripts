@@ -45,9 +45,7 @@ function verify_cert_file {
     while openssl x509 -noout &> /dev/null; do
         cert_count=$((cert_count+1))
     done < "$1"
-    if [[ "$cert_count" != 1 ]]; then
-        invalid_certificate
-    fi
+    [[ "$cert_count" == 1 ]] || invalid_certificate
 }
 
 function verify_issuer {
@@ -141,6 +139,7 @@ if [ -s "$peer_crt_file" ]; then
         echo
         echo "ERROR: This peer has already been registered."
         echo
+        exit 1
     fi
 else
     ns_comment_ext="$(openssl x509 -noout -ext nsComment -in "$crt_file")"
