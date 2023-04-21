@@ -16,7 +16,7 @@ if [[ "$#" != 0 ]]; then
     exit 2
 fi
 
-for dependency in openssl envsubst cmp printf zip unzip hexdump
+for dependency in openssl envsubst zip unzip hexdump
 do
     if ! which "$dependency" &> /dev/null; then
         echo
