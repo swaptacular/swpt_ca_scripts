@@ -99,6 +99,14 @@ function match_public_key_hash {
     [[ "$public_key_hash" == "$DN_SERIAL_NUMBER" ]] || invalid_certificate
 }
 
+function lock_seqnum_file {
+    if which flock &> /dev/null; then
+        flock "$seqnum_file" "$@"
+    else
+        "$@"
+    fi
+}
+
 function reserve_subnet {
     subnet=
     subnet_dir="$1"
@@ -107,7 +115,7 @@ function reserve_subnet {
     prefix="$4"
     format_str="%0${subnet_len}x\n"
     seqnum_file="$subnet_dir/SEQNUM"
-    seqnum=$(flock -s "$seqnum_file" cat "$seqnum_file")
+    seqnum=$(lock_seqnum_file cat "$seqnum_file")
     error_code=0
     set -o noclobber
     while true
@@ -124,7 +132,7 @@ function reserve_subnet {
         fi
     done
     set +o noclobber
-    flock -x "$seqnum_file" echo "$seqnum" > "$seqnum_file"
+    lock_seqnum_file echo "$seqnum" > "$seqnum_file"
     return "$error_code"
 }
 
