@@ -47,6 +47,16 @@ function invalid_certificate {
     exit 1
 }
 
+function parse_year {
+    if date --version &> /dev/null; then
+        # GNU date is installed.
+        date --date="$1" "+%Y"
+    else
+        # Try BSD date.
+        date -j -f '%b %e %T %Y %Z' "$1" "+%Y"
+    fi
+}
+
 function verify_cert_file {
     cert_count=0
     while openssl x509 -noout &> /dev/null; do
@@ -114,7 +124,7 @@ function verify_enddate {
     enddate_output=$(openssl x509 -noout -enddate -in "$1")
     enddate=$(echo "$enddate_output" | sed -nE 's/^.*\bnotAfter=(.*)$/\1/p')
     [[ -n "$enddate" ]] || invalid_certificate
-    endyear=$(date --date="$enddate" "+%Y")
+    endyear=$(parse_year "$enddate")
     thisyear=$(date "+%Y")
     aheadyear=$((thisyear+500))
     if [ "$aheadyear" -gt "$endyear" ]; then
