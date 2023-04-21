@@ -88,8 +88,8 @@ function verify_issuer {
 
 function verify_basic_constraints {
     bconstraints="$(openssl x509 -noout -ext basicConstraints -in "$1")"
-    echo "$bconstraints" | grep -P '\bcritical\b' > /dev/null || invalid_certificate
-    echo "$bconstraints" | grep -P '\bCA: *TRUE\b' > /dev/null || invalid_certificate
+    echo "$bconstraints" | grep -E '\bcritical\b' > /dev/null || invalid_certificate
+    echo "$bconstraints" | grep -E '\bCA: *TRUE\b' > /dev/null || invalid_certificate
 }
 
 function verify_subject {
