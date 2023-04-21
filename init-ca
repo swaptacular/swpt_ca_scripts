@@ -196,7 +196,7 @@ if [ ! -s root-ca.crt ]; then
             -in "$self_csr" \
             -out root-ca.crt \
             -extensions ca_ext
-    [ -s root-ca.crt ] || exit 1
+    [ -s root-ca.crt ] || exit 3
     echo
     echo '***********************************************************************'
     echo '* IMPORTANT: A new self-signed certificate file has been created for  *'

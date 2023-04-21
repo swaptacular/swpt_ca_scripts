@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 if [[ "$#" != 1 && "$#" != 2 || "$1" == "--help" ]]; then
     echo 'Generates a certificate file from a certificate signing request (CSR)'
@@ -42,8 +43,6 @@ DN_O=$(echo "$DN" | grep -Po '(?<=\bO = )[\sA-Za-z0-9-]+' || true)
 DN_OU=$(echo "$DN" | grep -Po '(?<=\bOU = )[\sA-Za-z0-9-]+' || true)
 DN_SERIAL_NUMBER=$(echo "$DN" | grep -Po '(?<=\bserialNumber = )[a-f0-9]+' || true)
 
-set -e
-
 if [[ "$DN_O" != "Swaptacular Nodes Registry" || \
       "$DN_OU" != "$(cat "$DIR/db/nodetype")" || \
       "$DN_SERIAL_NUMBER" != "$(cat "$DIR/db/nodeid")" ]]; then
@@ -63,12 +62,11 @@ openssl ca \
     -days "${2-365}" \
     -extensions server_ext
 
-if [ -s "$crt_file" ]; then
-    echo
-    echo '***********************************************************************'
-    echo '* IMPORTANT: A new certificate file has been created. You can use     *'
-    echo '*            it to establish secure SSL connections with other        *'
-    echo '*            Swaptacular nodes.                                       *'
-    echo '***********************************************************************'
-    echo "File location: $crt_file"
-fi
+[ -s "$crt_file" ] || exit 3
+echo
+echo '***********************************************************************'
+echo '* IMPORTANT: A new certificate file has been created. You can use     *'
+echo '*            it to establish secure SSL connections with other        *'
+echo '*            Swaptacular nodes.                                       *'
+echo '***********************************************************************'
+echo "File location: $crt_file"
