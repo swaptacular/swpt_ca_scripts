@@ -16,7 +16,7 @@ if [[ "$#" != 0 ]]; then
     exit 2
 fi
 
-for dependency in openssl envsubst cmp flock printf zip unzip date
+for dependency in openssl envsubst cmp flock printf zip unzip date hexdump
 do
     if ! which "$dependency" &> /dev/null; then
         echo
@@ -124,7 +124,7 @@ cd "$DIR"
 mkdir certs db nodeinfo 2> /dev/null || true
 touch db/index
 [ -s db/serial ] || openssl rand -hex 16  > db/serial
-[ ! -s db/crlnumber ] || echo 1001 > db/crlnumber
+[ -s db/crlnumber ] || echo 1001 > db/crlnumber
 release_unused_debtor_subnets
 
 if [ ! -s db/nodetype -o ! -s db/nodeid ]; then
