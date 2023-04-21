@@ -28,6 +28,13 @@ function find_script_dir {
     DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
 }
 
+function get_dn_filed {
+    sed_expr='s/^.*\b'
+    sed_expr+="$1"
+    sed_expr+=' = ([^,]*).*$/\1/p'
+    echo "$2" | sed -nE "$sed_expr"
+}
+
 function delete_temp_dir {
     rm -rf "$temp_dir"
 }
@@ -185,14 +192,14 @@ echo
 unzip -d "$temp_dir/nodeinfo" "$temp_dir/nodeinfo.zip"
 rm "$temp_dir/nodeinfo.zip" "$temp_dir/nodeinfo.signature"
 
-export DN_O=$(echo "$DN" | grep -Po '(?<=\bO = )[\sA-Za-z0-9-]+' || true)
-export DN_OU=$(echo "$DN" | grep -Po '(?<=\bOU = )[\sA-Za-z0-9-]+' || true)
-export DN_SERIAL_NUMBER=$(echo "$DN" | grep -Po '(?<=\bserialNumber = )[a-f0-9]+' || true)
+export DN_O=$(get_dn_filed O "$DN")
+export DN_OU=$(get_dn_filed OU "$DN")
+export DN_SERIAL_NUMBER=$(get_dn_filed serialNumber "$DN")
 
 [[ "$DN_O" == "Swaptacular Nodes Registry" ]] || invalid_certificate
 [[ -n "$DN_OU" ]] || invalid_node_type
-[[ -n "$DN_SERIAL_NUMBER" ]] || invalid_node_type
 [[ "$DN_SERIAL_NUMBER" != "$(cat "$DIR/db/nodeid")" ]] || invalid_node_type
+echo "$DN_SERIAL_NUMBER" | grep -E '[a-f0-9]+' > /dev/null || invalid_node_type
 
 mkdir "$DIR/peers" 2> /dev/null || true
 peer_dir="$DIR/peers/$DN_SERIAL_NUMBER"

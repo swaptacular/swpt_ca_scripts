@@ -26,6 +26,13 @@ function find_script_dir {
     DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
 }
 
+function get_dn_filed {
+    sed_expr='s/^.*\b'
+    sed_expr+="$1"
+    sed_expr+=' = ([^,]*).*$/\1/p'
+    echo "$2" | sed -nE "$sed_expr"
+}
+
 find_script_dir || exit 3
 
 csr_file="$1"
@@ -39,9 +46,9 @@ if [ -s "$crt_file" ]; then
 fi
 
 DN=$(openssl req -noout -subject -in "$csr_file")
-DN_O=$(echo "$DN" | grep -Po '(?<=\bO = )[\sA-Za-z0-9-]+' || true)
-DN_OU=$(echo "$DN" | grep -Po '(?<=\bOU = )[\sA-Za-z0-9-]+' || true)
-DN_SERIAL_NUMBER=$(echo "$DN" | grep -Po '(?<=\bserialNumber = )[a-f0-9]+' || true)
+DN_O=$(get_dn_filed O "$DN")
+DN_OU=$(get_dn_filed OU "$DN")
+DN_SERIAL_NUMBER=$(get_dn_filed serialNumber "$DN")
 
 if [[ "$DN_O" != "Swaptacular Nodes Registry" || \
       "$DN_OU" != "$(cat "$DIR/db/nodetype")" || \

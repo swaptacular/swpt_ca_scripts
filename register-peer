@@ -26,6 +26,13 @@ function find_script_dir {
     DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
 }
 
+function get_dn_filed {
+    sed_expr='s/^.*\b'
+    sed_expr+="$1"
+    sed_expr+=' = ([^,]*).*$/\1/p'
+    echo "$2" | sed -nE "$sed_expr"
+}
+
 function invalid_node_type {
     echo
     echo "ERROR: The node type is invalid."
@@ -50,9 +57,9 @@ function verify_cert_file {
 
 function verify_issuer {
     DN=$(openssl x509 -noout -issuer -in "$1")
-    DN_O=$(echo "$DN" | grep -Po '(?<=\bO = )[\sA-Za-z0-9-]+' || true)
-    DN_OU=$(echo "$DN" | grep -Po '(?<=\bOU = )[\sA-Za-z0-9-]+' || true)
-    DN_SERIAL_NUMBER=$(echo "$DN" | grep -Po '(?<=\bserialNumber = )[a-f0-9]+' || true)
+    DN_O=$(get_dn_filed O "$DN")
+    DN_OU=$(get_dn_filed OU "$DN")
+    DN_SERIAL_NUMBER=$(get_dn_filed serialNumber "$DN")
 
     [[ -n "$DN_SERIAL_NUMBER" ]] || invalid_certificate
     [[ "$DN_O" == "Swaptacular Nodes Registry" ]] || invalid_certificate
@@ -94,9 +101,9 @@ function verify_basic_constraints {
 
 function verify_subject {
     sbj_dn=$(openssl x509 -noout -subject -in "$1")
-    sbj_dn_o=$(echo "$sbj_dn" | grep -Po '(?<=\bO = )[\sA-Za-z0-9-]+' || true)
-    sbj_dn_ou=$(echo "$sbj_dn" | grep -Po '(?<=\bOU = )[\sA-Za-z0-9-]+' || true)
-    sbj_dn_sn=$(echo "$sbj_dn" | grep -Po '(?<=\bserialNumber = )[a-f0-9]+' || true)
+    sbj_dn_o=$(get_dn_filed O "$sbj_dn")
+    sbj_dn_ou=$(get_dn_filed OU "$sbj_dn")
+    sbj_dn_sn=$(get_dn_filed serialNumber "$sbj_dn")
 
     [[ "$sbj_dn_o" == "Swaptacular Nodes Registry" ]] || invalid_certificate
     [[ "$sbj_dn_ou" == "$node_type" ]] || invalid_certificate
@@ -105,7 +112,8 @@ function verify_subject {
 
 function verify_enddate {
     enddate_output=$(openssl x509 -noout -enddate -in "$1")
-    enddate=$(echo "$enddate_output" | grep -Po '(?<=notAfter=).*' || date)
+    enddate=$(echo "$enddate_output" | sed -nE 's/^.*\bnotAfter=(.*)$/\1/p')
+    [[ -n "$enddate" ]] || invalid_certificate
     endyear=$(date --date="$enddate" "+%Y")
     thisyear=$(date "+%Y")
     aheadyear=$((thisyear+500))
@@ -143,7 +151,7 @@ if [ -s "$peer_crt_file" ]; then
     fi
 else
     ns_comment_ext="$(openssl x509 -noout -ext nsComment -in "$crt_file")"
-    subnet="$(echo "$ns_comment_ext" | grep -Po '(?<=\bSubnet: )[a-f0-9]{6,16}$' || true)"
+    subnet="$(echo "$ns_comment_ext" | sed -nE 's/^.*\bSubnet: ([a-f0-9]{6,16})$/\1/p')"
     case "$node_type" in
         "Creditors Agents")
             [[ -n "$subnet" ]] || invalid_certificate
@@ -153,7 +161,7 @@ else
             ;;
         "Debtors Agents")
             [[ -n "$subnet" ]] || invalid_certificate
-            echo "$subnet" | grep -P "^${DN_SERIAL_NUMBER}" || invalid_certificate
+            echo "$subnet" | grep -E "^${DN_SERIAL_NUMBER}" || invalid_certificate
             echo "$subnet" > "$DIR/debtors-subnet.txt"
             ;;
     esac
