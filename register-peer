@@ -95,10 +95,10 @@ function verify_issuer {
         echo
         echo "ERROR: Unknown peer node \"$DN_SERIAL_NUMBER\"".
         echo
-        echo '       To successfully register a peer, first you need to receive a'
-        echo '       request bundle from the owner of the other Swaptacular node. Then'
-        echo '       you should use the "sign-peercert" command, to create a peer'
-        echo '       certificate for your peer.'
+        echo '       To successfully register a peer, first you need to receive an'
+        echo '       info-bundle file from the owner of the other Swaptacular'
+        echo '       node. Then you should use the "sign-peercert" command, to'
+        echo '       create a peer certificate for your peer.'
         exit 1
     fi
 }

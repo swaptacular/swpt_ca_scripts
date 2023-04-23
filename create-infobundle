@@ -20,12 +20,12 @@ function delete_temp_dir {
 find_script_dir || exit 3
 
 if [[ "$#" != 1 || "$1" == "--help" ]]; then
-    echo 'Creates a request bundle file (a "zip" file). All files and'
+    echo 'Creates a info-bundle file (a "zip" file). All files and'
     echo "sub-directories that the $DIR/nodeinfo"
     echo 'directory contains, will be included in the created bundle. Those files'
     echo 'may contain additional information about your Swaptacular node.'
     echo
-    echo 'Usage: create-reqbundle BUNDLE_FILENAME[.zip]'
+    echo 'Usage: create-infobundle INFOBUNDLE_FILENAME[.zip]'
     exit 2
 fi
 
@@ -76,7 +76,7 @@ echo
 
 echo 'The contents of the "nodeinfo" directory has been packaged into a "zip"'
 echo 'file. This file should be digitally signed and included in the'
-echo 'request bundle...'
+echo 'info-bundle...'
 echo
 openssl dgst -sha256 \
     -sign "$DIR/private/root-ca.key" \
@@ -90,7 +90,7 @@ zip -Xj -n ".zip" "$bundle_file" \
 
 echo
 echo '***********************************************************************'
-echo '* IMPORTANT: A new request bundle file has been created. If you want  *'
+echo '* IMPORTANT: A new info-bundle file has been created. If you want     *'
 echo '*            to establish a permanent authenticated connection with   *'
 echo '*            another Swaptacular node, you should send this file to   *'
 echo '*            the owners of the Swaptacular node, and wait for a       *'

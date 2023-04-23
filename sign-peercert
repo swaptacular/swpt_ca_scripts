@@ -3,16 +3,15 @@ set -e
 set -o pipefail
 
 if [[ "$#" != 1 || "$1" == "--help" ]]; then
-    echo 'Creates a peer certificate file, given a request bundle file. The'
-    echo 'request bundle file should be created and sent to you by another'
-    echo 'Swaptacular node, which wants to establish a permanent'
-    echo 'authenticated connection with your Swaptacular node. See the'
-    echo '"create-reqbundle" command.'
+    echo 'Creates a peer certificate file, given an info-bundle file. The'
+    echo 'info-bundle file should be created by another Swaptacular node,'
+    echo 'which wants to establish a permanent authenticated connection'
+    echo 'with your Swaptacular node. See the "create-infobundle" command.'
     echo
     echo 'NOTE: If this command is executed for an already established peer,'
     echo "      it will try to update the peer's \"nodeinfo\" directory."
     echo
-    echo 'Usage: sign-peercert REQBUNDLE_FILE'
+    echo 'Usage: sign-peercert INFOBUNDLE_FILE'
     exit 2
 fi
 
@@ -269,9 +268,9 @@ echo '* IMPORTANT: A peer certificate file has been created. You should     *'
 echo '*            send this file to the owner of the Swaptacular node that *'
 echo '*            made the certificate signing request.                    *'
 echo '*                                                                     *'
-echo '*            Also, do not forget to send your own request bundle      *'
-echo '*            file as well (see the "create-reqbundle" command), so    *'
-echo '*            that you too, could receive a peer certificate from your *'
+echo '*            Also, do not forget to send your own info-bundle file    *'
+echo '*            as well (see the "create-infobundle" command), so that   *'
+echo '*            you too, could receive a peer certificate from your      *'
 echo '*            peer node.                                               *'
 echo '***********************************************************************'
 echo "File location: $peercert_file"
