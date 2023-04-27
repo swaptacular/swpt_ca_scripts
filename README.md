@@ -44,14 +44,21 @@ db/                  LICENSE              README.md       sign-peercert*
 generate-masterkey*  nodeinfo/            register-peer*  sign-servercert*
 ```
 
-- `certs/` will contain the certificates that have been signed by your
+* `root-ca.crt` contains the self-signed certificate for your root-CA.
+* `certs/` will contain the certificates that have been signed by your
   root-CA.
-- `db/` will contain all sorts of bookkeeping information about your
+* `db/` will contain all sorts of bookkeeping information about your
   root-CA.
-- `nodeinfo/` will contain information about your Swaptacular node. You can
+* `nodeinfo/` will contain information about your Swaptacular node. You can
   add random files to this directory, and your peers will store all those
   files in their root-CA databases. Most importantly, the information that
   you put here, should allow your peers to get in touch with you, if
   necessary.
-- `peers/` will contain information about your peers, including the content
+* `peers/` will contain information about your peers, including the content
   of their `nodeinfo` directories.
+
+The information contained in those files and directories **is very
+important** for the proper functioning of your Swaptacular node. Therefore,
+it is probably a good idea to use a version control system (like `git`), and
+each time you add a new peer, or make other important changes, to commit
+those changes to your version control servers.
