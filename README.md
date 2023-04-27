@@ -78,16 +78,16 @@ Info-bundle files are `.zip` archives that contain 4 files:
 4. A digital signature for the "nodeinfo.zip" file (`nodeinfo.signature`).
 
 To create an info-bundle file for your node, use the `create-infobundle`
-command, specifying the name of the file that you want to be created (in
-this example, "my-foo-node"):
+command, specifying the path to the file that you want to be created (in
+this example, "~/my-foo-node"):
 
 ```shell
-$ ./create-infobundle my-foo-node
+$ ./create-infobundle ~/my-foo-node
 ```
 
 You will be asked to enter the password for your private key at least once.
-At the end, an info-bundle file will be created for you, with the specified
-name (in this example: `my-foo-node.zip`).
+At the end, an info-bundle file will be created for you, at the specified
+path (in this example: `~/my-foo-node.zip`).
 
 You can run the `create-infobundle` command many times, creating as many
 info-bundle files as you want. Normally, whenever you make changes to your
@@ -106,7 +106,7 @@ identity before your peers. Signing a server certificate includes 2 steps:
    directly on the server, so that the private key never "leaves" the server
    on which it has been generated.
 
-   To generate a public/private key pair for your server, you may the
+   To generate a public/private key pair for your server, you may use the
    `generate-serverkey` command, specifying the filename (without the file
    extension) of the files to be created (in this example, "myserver"):
 
