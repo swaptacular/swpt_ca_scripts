@@ -15,8 +15,8 @@ do this, use the `generate-masterkey` script:
 $ ./generate-masterkey
 ```
 
-This will create a `private/` sub-directory which will contain the root-CA
-private key, encrypted with the password that you have been asked to enter.
-You should keep the contents of this directory secret. The contents of any
-other file and sub-directory in the directory containing the scripts is not
-secret, and if necessary or convenient, can be made publicly available.
+This will create a `private/` sub-directory which will contain your root-CA
+private key, encrypted with a password that you are asked to enter. **You
+should keep the contents of this directory secret**. The contents of any
+other file and sub-directory that is created by the scripts is not a secret,
+and can be made publicly available.
