@@ -8,6 +8,8 @@ The scripts should work on any contemporary GNU or BSD system, on which
 `bash` is installed, along with `openssl`, `zip`, `unzip`, `envsubst`, and
 `hexdump`.
 
+## Creating the root-CA database
+
 To create your root-CA, first you need to generate a private key for it. To
 do this, use the `generate-masterkey` script:
 
@@ -62,3 +64,7 @@ important** for the proper functioning of your Swaptacular node. Therefore,
 it is probably a good idea to use a version control system (like `git`), and
 each time you add a new peer, or make other important changes, to commit
 those changes to your version control servers.
+
+## Creating an "info-bundle" file
+
+TODO
