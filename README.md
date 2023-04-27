@@ -67,20 +67,29 @@ Swaptacular node. Therefore, it is probably a good idea to use a version
 control system (like `git`), and each time you add a new peer, or make other
 important changes, to commit those changes to your version control servers.
 
-## Creating an "info-bundle" file
+## Creating an info-bundle file
 
-Every Swaptacular network node should create an "info-bundle" file for
-itself, which is a `.zip` file that contains 4 files:
+Every Swaptacular network node should create an info-bundle file for itself,
+which is a `.zip` archive that contains 4 files:
 
 1. The self-signed certificate for the node's root-CA (`root-ca.crt`).
 2. A certificate signing request (`root-ca.csr`).
-3. The contents of the `nodeinfo` sub-directory (`nodeinfo.zip`).
+3. The contents of the node's `nodeinfo` sub-directory (`nodeinfo.zip`).
 4. A digital signature for the `nodeinfo.zip` file (`nodeinfo.signature`).
 
-To create your "info-bundle" file, use the `create-infobundle` command,
+To create an info-bundle file, use the `create-infobundle` command,
 specifying the name of the info-bundle file that should be created
 ("my-foo-node", in this example):
 
 ```shell
 $ ./create-infobundle my-foo-node
 ```
+
+You will be asked to enter the password for your private key at least once.
+At the end, an info-bundle file will be created for you, with the specified
+name (`my-foo-node.zip` in this example).
+
+You can run the `create-infobundle` command many times, creating as many
+info-bundle files as you want. Normally, whenever you make changes to your
+`nodeinfo` directory, you will need to generate a new, updated info-bundle
+file.
