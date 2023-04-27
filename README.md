@@ -19,7 +19,7 @@ $ ./generate-masterkey
 
 This will create a `private/` sub-directory which will contain your root-CA
 private key, encrypted with a password that you will be asked to enter.
-**You should keep the content of the `private/` sub-directory secret**. The
+**You should keep the content of the private/ sub-directory secret**. The
 content of any other files and sub-directories, that are automatically
 created by the scripts, is not a secret, and can even be made publicly
 available.
@@ -74,7 +74,7 @@ Info-bundle files are `.zip` archives that contains 4 files:
 
 1. The self-signed certificate for the node's root-CA (`root-ca.crt`).
 2. A certificate signing request (`root-ca.csr`).
-3. The contents of the node's "nodeinfo" directory (`nodeinfo.zip`).
+3. The content of the node's "nodeinfo" directory (`nodeinfo.zip`).
 4. A digital signature for the "nodeinfo.zip" file (`nodeinfo.signature`).
 
 To create an info-bundle file for your node, use the `create-infobundle`
