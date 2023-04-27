@@ -16,7 +16,8 @@ $ ./generate-masterkey
 ```
 
 This will create a `private/` sub-directory which will contain your root-CA
-private key, encrypted with a password that you are asked to enter. **You
-should keep the contents of the `private/` sub-directory secret**. The
-contents of any other files and sub-directories that are created by the
-scripts is not a secret, and can be made publicly available.
+private key, encrypted with a password that you will be asked to enter.
+**You should keep the content of the `private/` sub-directory secret**. The
+content of any other files and sub-directories, that are automatically
+created by the scripts is not a secret, and can even be made publicly
+available.
