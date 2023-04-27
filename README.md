@@ -92,5 +92,5 @@ name (in this example, `my-foo-node.zip`).
 You can run the `create-infobundle` command many times, creating as many
 info-bundle files as you want. Normally, whenever you make changes to your
 "nodeinfo" directory, you will need to generate a new, updated info-bundle
-file. It is probably a good idea to have your latest info-bundle file under
+file. It is probably a good idea, to have your latest info-bundle file under
 version control.
