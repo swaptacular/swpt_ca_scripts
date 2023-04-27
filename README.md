@@ -33,8 +33,8 @@ You will be asked a bunch of questions, and you will have to enter the
 password for your private key a few times. At the end, a self-signed
 certificate will be generated for your certificate authority. Also, a bunch
 of sub-directories will be created, which contain the root-CA database. For
-example, after running the `init-ca` command, the content of your script
-directory will be:
+example, after running the `init-ca` command, your script directory will
+contain something similar to this:
 
 ``` shell
 $ ls -F
@@ -44,17 +44,17 @@ db/                  LICENSE              README.md       sign-peercert*
 generate-masterkey*  nodeinfo/            register-peer*  sign-servercert*
 ```
 
-- The `certs/` sub-directory will contain the certificates that have been
+- The `certs` sub-directory will contain the certificates that have been
   signed by your root-CA.
 
-- The `db/` sub-directory will contain all sorts of bookkeeping information
+- The `db` sub-directory will contain all sorts of bookkeeping information
   about your root-CA.
 
-- The `nodeinfo/` sub-directory will contain information about your
+- The `nodeinfo` sub-directory will contain information about your
   Swaptacular node. You can add random files to this directory, and your
   peers will store all those files in their root-CA databases. Most
   importantly, the information that you put here should allow your peers to
   get in touch with you, if necessary.
 
-- The `peers/` sub-directory will contain information about your peers,
-  including the content of their `nodeinfo/` directories.
+- The `peers` sub-directory will contain information about your peers,
+  including the content of their `nodeinfo` directories.
