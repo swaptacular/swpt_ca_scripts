@@ -10,7 +10,7 @@ if [[ "$#" != 1 && "$#" != 2 || "$1" == "--help" ]]; then
     echo
     echo 'DAYS is the number of days of certificate validity (365 by default).'
     echo
-    echo 'Usage: sign-servercert CSR_FILE [DAYS]'
+    echo 'Usage: sign-servercert CSR_FILEPATH [DAYS]'
     exit 2
 fi
 
