@@ -59,7 +59,7 @@ generate-masterkey*  nodeinfo/            register-peer*  sign-servercert*
   you put here, should allow your peers to get in touch with you, if
   necessary.
 * `peers/` will contain information about your peers, including the content
-  of their `nodeinfo` directories.
+  of their "nodeinfo" directories.
 
 As you may have guessed, the information contained in these files and
 directories **is very important** for the proper functioning of your
@@ -78,8 +78,8 @@ Info-bundle files are `.zip` archives that contains 4 files:
 4. A digital signature for the "nodeinfo.zip" file (`nodeinfo.signature`).
 
 To create an info-bundle file for your node, use the `create-infobundle`
-command, specifying the name of the info-bundle file you want to be created
-(in this example, "my-foo-node"):
+command, specifying the name of the file that you want to be created (in
+this example, "my-foo-node"):
 
 ```shell
 $ ./create-infobundle my-foo-node
@@ -87,10 +87,10 @@ $ ./create-infobundle my-foo-node
 
 You will be asked to enter the password for your private key at least once.
 At the end, an info-bundle file will be created for you, with the specified
-name (`my-foo-node.zip` in this example).
+name (in this example, `my-foo-node.zip`).
 
 You can run the `create-infobundle` command many times, creating as many
 info-bundle files as you want. Normally, whenever you make changes to your
-`nodeinfo` directory, you will need to generate a new, updated info-bundle
+"nodeinfo" directory, you will need to generate a new, updated info-bundle
 file. It is probably a good idea to have your latest info-bundle file under
 version control.
