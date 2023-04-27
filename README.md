@@ -98,13 +98,13 @@ version control.
 ## Signing a server certificate
 
 Server certificates are used by your servers, so that they can prove their
-identity before your peers. Signing a server certificate includes 2 steps:
+identity before your peers. Signing a server certificate includes 3 steps:
 
 1. First you need to generate a public/private key pair for your server (a
    ".key" file), along with a corresponding certificate signing request (a
    ".csr" file). For maximum security, it is best to perform this step
-   directly on the server, so that the private key never "leaves" the server
-   on which it has been generated.
+   directly on the server itself, so that the private key never "leaves" the
+   server on which it has been generated.
 
    To do this, you may use the `generate-serverkey` command, specifying the
    path to the files (without the file extension) that need to be created
@@ -117,17 +117,17 @@ identity before your peers. Signing a server certificate includes 2 steps:
    A ".key" file, and a ".csr" file will be created for you. In this
    example, those would be `~/myserver.key` and `~/myserver.csr`.
 
-2. You use the certificate signing request generated in step 1, and your
-   root-CA private key, to sign the server certificate. Then, the signed
-   server certificate (a ".crt" file) should be copied to the server, so
-   that it can be used for server authentication.
-
-   To do this, run the `generate-serverkey` command, specifying the path to
-   the ".csr" file:
+2. Then you use the certificate signing request generated in step 1, and
+   your root-CA private key, to sign the server certificate. To do this, run
+   the `generate-serverkey` command, specifying the path to the ".csr" file:
 
    ```shell
    $ ./sign-servercert ~/myserver.csr
    ```
 
    A ".crt" file will be created for you. In this example, this would be
-   `~/myserver.crt`. You can copy this file to your server.
+   `~/myserver.crt`.
+
+3. After this, the server certificate created in step 2 (a ".crt" file)
+   should be copied to the server, so that it can be used for
+   authentication.
