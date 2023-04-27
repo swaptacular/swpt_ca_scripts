@@ -77,8 +77,8 @@ Info-bundle files are `.zip` archives that contains 4 files:
 3. The contents of the node's "nodeinfo" directory (`nodeinfo.zip`).
 4. A digital signature for the "nodeinfo.zip" file (`nodeinfo.signature`).
 
-To create an info-bundle file, use the `create-infobundle` command,
-specifying the name of the info-bundle file that should be created
+To create an info-bundle file for your node, use the `create-infobundle`
+command, specifying the name of the info-bundle file you want to be created
 (in this example, "my-foo-node"):
 
 ```shell
