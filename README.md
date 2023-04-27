@@ -70,7 +70,7 @@ important changes, to commit those changes to your version control servers.
 ## Creating an info-bundle file
 
 Every Swaptacular network node should create an info-bundle file for itself.
-Info-bundle files are `.zip` archives that contains 4 files:
+Info-bundle files are `.zip` archives that contain 4 files:
 
 1. The self-signed certificate for the node's root-CA (`root-ca.crt`).
 2. A certificate signing request (`root-ca.csr`).
