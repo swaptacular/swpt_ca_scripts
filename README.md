@@ -100,17 +100,22 @@ version control.
 Server certificates are used by your servers, so that they can prove their
 identity before your peers. Signing a server certificate includes 2 steps:
 
-1. First you need to generate a public/private key pair for your server(s),
-   along with a corresponding certificate signing request (a ".csr" file).
-   For maximum security, it is best to perform this step directly on the
-   server, so that the private key never "leaves" the server on which it has
-   been generated.
+1. First you need to generate a public/private key pair for your server (a
+   ".key" file), along with a corresponding certificate signing request (a
+   ".csr" file). For maximum security, it is best to perform this step
+   directly on the server, so that the private key never "leaves" the server
+   on which it has been generated.
 
-    ```shell
-    $ ./generate-serverkey my-server
-    ```
+   To generate a server public/private key pair for your server, use the
+   `generate-serverkey` command, specifying the name of the files to be
+   created (in this example, "myserver"):
 
-    TODO
+   ```shell
+   $ ./generate-serverkey myserver
+   ```
+
+   A ".key" file, and a ".csr" file will be created for you. In this example
+   those will be `myserver.key` and `myserver.csr`.
 
 2. You use the certificate signing request generated in step 1, and your
    root-CA private key, to sign the server certificate. Then, the signed
