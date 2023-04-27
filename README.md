@@ -45,8 +45,8 @@ db/                  LICENSE              README.md       sign-peercert*
 generate-masterkey*  nodeinfo/            register-peer*  sign-servercert*
 ```
 
-* `root-ca.conf.template` contain configuration for the OpenSSL library.
-  This file is used only during the initial creation of the root-CA
+* `root-ca.conf.template` contains configuration parameters for the OpenSSL
+  library. This file is used only during the initial creation of the root-CA
   database.
 * `root-ca.crt` contains the self-signed certificate for your root-CA.
 * `certs/` will contain the certificates that have been signed by your
@@ -69,4 +69,18 @@ important changes, to commit those changes to your version control servers.
 
 ## Creating an "info-bundle" file
 
-TODO
+Every Swaptacular network node should create an "info-bundle" file for
+itself, which is a `.zip` file that contains 4 files:
+
+1. The self-signed certificate for the node's root-CA (`root-ca.crt`).
+2. A certificate signing request (`root-ca.csr`).
+3. The contents of the `nodeinfo` sub-directory (`nodeinfo.zip`).
+4. A digital signature for the `nodeinfo.zip` file (`nodeinfo.signature`).
+
+To create your "info-bundle" file, use the `create-infobundle` command,
+specifying a name for the info-bundle file that should be created
+("foo-nodeinfo", in this example):
+
+```shell
+$ ./create-infobundle foo-nodeinfo
+```
