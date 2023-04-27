@@ -25,7 +25,7 @@ created by the scripts, is not a secret, and can even be made publicly
 available.
 
 Once you have successfully generated a private key, use the `init-ca`
-command to initialize the root-CA database:
+command to create the root-CA database:
 
 ```shell
 $ ./init-ca
@@ -34,9 +34,8 @@ $ ./init-ca
 You will be asked a bunch of questions, and you will have to enter the
 password for your private key a few times. At the end, a self-signed
 certificate will be generated for your certificate authority. Also, a bunch
-of sub-directories will be created, which contain the root-CA database. For
-example, after running the `init-ca` command, your script directory will
-contain something similar to this:
+of sub-directories will be created. For example, after running the `init-ca`
+command, your script directory will contain something similar to this:
 
 ``` shell
 $ ls -F
@@ -46,6 +45,9 @@ db/                  LICENSE              README.md       sign-peercert*
 generate-masterkey*  nodeinfo/            register-peer*  sign-servercert*
 ```
 
+* `root-ca.conf.template` contain configuration for the OpenSSL library.
+  This file is used only during the initial creation of the root-CA
+  database.
 * `root-ca.crt` contains the self-signed certificate for your root-CA.
 * `certs/` will contain the certificates that have been signed by your
   root-CA.
@@ -59,11 +61,11 @@ generate-masterkey*  nodeinfo/            register-peer*  sign-servercert*
 * `peers/` will contain information about your peers, including the content
   of their `nodeinfo` directories.
 
-The information contained in those files and directories **is very
-important** for the proper functioning of your Swaptacular node. Therefore,
-it is probably a good idea to use a version control system (like `git`), and
-each time you add a new peer, or make other important changes, to commit
-those changes to your version control servers.
+As you may have guessed, the information contained in these files and
+directories **is very important** for the proper functioning of your
+Swaptacular node. Therefore, it is probably a good idea to use a version
+control system (like `git`), and each time you add a new peer, or make other
+important changes, to commit those changes to your version control servers.
 
 ## Creating an "info-bundle" file
 
