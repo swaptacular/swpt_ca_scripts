@@ -78,9 +78,9 @@ itself, which is a `.zip` file that contains 4 files:
 4. A digital signature for the `nodeinfo.zip` file (`nodeinfo.signature`).
 
 To create your "info-bundle" file, use the `create-infobundle` command,
-specifying a name for the info-bundle file that should be created
-("foo-nodeinfo", in this example):
+specifying the name of the info-bundle file that should be created
+("my-foo-node", in this example):
 
 ```shell
-$ ./create-infobundle foo-nodeinfo
+$ ./create-infobundle my-foo-node
 ```
