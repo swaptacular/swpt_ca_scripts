@@ -106,19 +106,29 @@ identity before your peers. Signing a server certificate includes 2 steps:
    directly on the server, so that the private key never "leaves" the server
    on which it has been generated.
 
-   To generate a server public/private key pair for your server, use the
-   `generate-serverkey` command, specifying the name of the files to be
-   created (in this example, "myserver"):
+   To generate a public/private key pair for your server, use the
+   `generate-serverkey` command, specifying the filename (without the file
+   extension), of the files to be created (in this example, "myserver"):
 
    ```shell
    $ ./generate-serverkey myserver
    ```
 
-   A ".key" file, and a ".csr" file will be created for you. In this example
-   those will be `myserver.key` and `myserver.csr`.
+   A ".key" file, and a ".csr" file will be created for you. In this
+   example, those would be `myserver.key` and `myserver.csr`.
 
 2. You use the certificate signing request generated in step 1, and your
    root-CA private key, to sign the server certificate. Then, the signed
    server certificate (a ".crt" file) should be copied to the server, so
-   that it can use to authenticate itself before your peers.
+   that it can use it to authenticate itself before your peers.
 
+   To create a signed certificate, from the ".csr" file generated in the
+   previous step, run the `generate-serverkey`, specifying the path to the
+   ".csr" file:
+
+   ```shell
+   $ ./sign-servercert myserver.csr
+   ```
+
+   A ".crt" file will be created for you. In this example, this would be
+   `myserver.crt`. You can copy this file to your server.
