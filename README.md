@@ -14,3 +14,9 @@ do this, use the `generate-masterkey` script:
 ```shell
 $ ./generate-masterkey
 ```
+
+This will create a `private/` sub-directory which will contain your private
+key, encrypted with the password that you have been asked to enter. You
+should keep the contents of this directory secret. The contents of the other
+sub-directories automatically created by the scripts is not secret, and if
+necessary or convenient, can be publicly available.
