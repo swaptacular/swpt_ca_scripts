@@ -79,10 +79,10 @@ Info-bundle files are `.zip` archives that contain 4 files:
 
 To create an info-bundle file for your node, use the `create-infobundle`
 command, specifying the path to the file that you want to be created (in
-this example, "~/my-foo-node"):
+this example, "~/my-foo-node.zip"):
 
 ```shell
-$ ./create-infobundle ~/my-foo-node
+$ ./create-infobundle ~/my-foo-node.zip  # You can omit the ".zip" extension.
 ```
 
 You will be asked to enter the password for your private key at least once.
