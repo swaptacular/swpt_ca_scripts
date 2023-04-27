@@ -74,12 +74,12 @@ which is a `.zip` archive that contains 4 files:
 
 1. The self-signed certificate for the node's root-CA (`root-ca.crt`).
 2. A certificate signing request (`root-ca.csr`).
-3. The contents of the node's `nodeinfo` sub-directory (`nodeinfo.zip`).
+3. The contents of the node's `nodeinfo` directory (`nodeinfo.zip`).
 4. A digital signature for the `nodeinfo.zip` file (`nodeinfo.signature`).
 
 To create an info-bundle file, use the `create-infobundle` command,
 specifying the name of the info-bundle file that should be created
-("my-foo-node", in this example):
+(in this example, "my-foo-node"):
 
 ```shell
 $ ./create-infobundle my-foo-node
@@ -92,4 +92,5 @@ name (`my-foo-node.zip` in this example).
 You can run the `create-infobundle` command many times, creating as many
 info-bundle files as you want. Normally, whenever you make changes to your
 `nodeinfo` directory, you will need to generate a new, updated info-bundle
-file.
+file. It is probably a good idea to have your latest info-bundle file under
+version control.
