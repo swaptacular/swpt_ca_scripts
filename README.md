@@ -87,7 +87,7 @@ $ ./create-infobundle my-foo-node
 
 You will be asked to enter the password for your private key at least once.
 At the end, an info-bundle file will be created for you, with the specified
-name (in this example, `my-foo-node.zip`).
+name (in this example: `my-foo-node.zip`).
 
 You can run the `create-infobundle` command many times, creating as many
 info-bundle files as you want. Normally, whenever you make changes to your
