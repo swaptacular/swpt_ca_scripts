@@ -111,8 +111,7 @@ steps:
    To do this, you **may** use the `generate-serverkey` command, specifying
    the path to the public/private key pair file that should be created,
    followed by the path to the certificate signing request file that should
-   be created. (In this example, those are "~/myserver.key" and
-   "~/myserver.csr"):
+   be created:
 
    ```shell
    $ ./generate-serverkey ~/myserver.key ~/myserver.csr
