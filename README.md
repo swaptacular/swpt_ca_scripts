@@ -225,9 +225,10 @@ $ ls -F /some-path/peers/fd75076e66e6bd5f8b7dee0e03bd51a0
 nodeinfo/  nodetype.txt  peercert.crt  root-ca.crt  sub-ca.crt  subnet.txt
 ```
 
-* `nodetype.txt` indicates the type your peer's node.
+* `nodeinfo/` contains information about the peer's node.
+* `nodetype.txt` indicates the type the peer's node.
 * `peercert.crt` contains the peer certificate that you signed.
-* `root-ca.crt` contains the self-signed certificate for your peer's
-  root-CA.
-* `sub-ca.crt` contains the peer certificate that you peer signed for you.
-* `nodeinfo/` contains information about your peer's node.
+* `root-ca.crt` contains the self-signed certificate for the peer's root-CA.
+* `sub-ca.crt` contains the peer certificate that the peer signed for you.
+* `subnet.txt` or `masq-subnet.txt` contains information about the range of
+  debtor/creditor IDs that are allocated to/by the peer.
