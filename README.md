@@ -135,9 +135,8 @@ steps:
    the end, a server certificate file will be created. In this example, this
    would be `~/myserver.crt`.
 
-3. After this, the server certificate created in step 2 (a ".crt" file)
-   should be copied to the server, so that it can be used for
-   authentication.
+3. After this, the server certificate file created in step 2 should be
+   copied to the server, so that it can be used for authentication.
 
 ## Signing a peer certificate
 
