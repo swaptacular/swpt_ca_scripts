@@ -185,9 +185,9 @@ centralized registry of accounting authority nodes.
 ## Registering a peer
 
 To finalize the process of registering a new peer, you need to receive a
-signed peer certificate from the peer. In addition, if you have not signed a
-peer certificate for this peer already, in order to do this, you will need
-to receive an *info-bundle* file as well.
+signed peer certificate from the peer. In addition, if you have not yourself
+signed a peer certificate for this peer already, in order to do this, you
+will need to receive an *info-bundle* file as well.
 
 **After you have signed a peer certificate for the peer**, run the
 `register-peer` command, specifying the path to the received peer
