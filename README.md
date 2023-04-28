@@ -216,3 +216,18 @@ At this point, the referred sub-directory of the "peers" directory (in this
 example: `/some-path/peers/fd75076e66e6bd5f8b7dee0e03bd51a0/`), contains all
 the necessary information for your servers to accept and initiate
 authenticated SSL connections from and to your peer.
+
+For example, after registering the peer, the corresponding may contain
+something similar to this:
+
+```shell
+$ ls -F /some-path/peers/fd75076e66e6bd5f8b7dee0e03bd51a0
+nodeinfo/  nodetype.txt  peercert.crt  root-ca.crt  sub-ca.crt  subnet.txt
+```
+
+* `nodetype.txt` contains the type your peer's Swaptacular node.
+* `peercert.crt.crt` contains the peer certificate that you have signed.
+* `root-ca.crt` contains the self-signed certificate for your peer's
+  root-CA.
+* `sub-ca.crt` contains the peer certificate that you peer signed for you.
+* `nodeinfo/` will contain information about your peer's Swaptacular node.
