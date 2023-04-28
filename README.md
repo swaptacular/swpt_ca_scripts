@@ -147,7 +147,7 @@ Before you can sign a peer certificate, first you will need to obtain the
 latest *info-bundle* file for the Swaptacular node that is about to become
 your peer. You can obtain this file directly from the owner of the node, or
 indirectly through a third party. Obtaining the info-bundle file through a
-third party is perfectly secure, because every file in the info-bundle is
+third party is perfectly safe, because every file in the info-bundle is
 digitally signed.
 
 Once you have obtained the correct info-bundle file, run the `sign-peercert`
@@ -175,3 +175,10 @@ to inform you what to do next:
 ***********************************************************************
 File location: /some-path/peers/fd75076e66e6bd5f8b7dee0e03bd51a0/peercert.crt
 ```
+
+**Note:** Before signing a peer certificate to an *accounting authority*
+node, it is highly recommended to take the time to verify that the
+*"serialNumber"* in the certificate's *"Subject"* is indeed reserved for the
+owner of the subject's public key. For example, this can be done by
+consulting a centralized registry of accounting authority nodes.
+
