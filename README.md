@@ -228,5 +228,5 @@ nodeinfo/  nodetype.txt  peercert.crt  root-ca.crt  sub-ca.crt  subnet.txt
 * `peercert.crt` contains the peer certificate that you signed.
 * `root-ca.crt` contains the self-signed certificate for the peer's root-CA.
 * `sub-ca.crt` contains the peer certificate that the peer signed for you.
-* `subnet.txt` or `masq-subnet.txt` contains information about the range of
-  debtor/creditor IDs that are allocated to/by the peer.
+* `subnet.txt` (or `masq-subnet.txt`) contains information about the range
+  of debtor/creditor IDs that are allocated to/by the peer.
