@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-if [[ "$#" != 1 && "$#" != 2 || "$1" == "--help" ]]; then
+if [[ "$#" != 2 && "$#" != 3 || "$1" == "--help" ]]; then
     echo 'Generates a certificate file from a certificate signing request (CSR)'
     echo 'file. The CSR file should be created by/for your server(s), using a'
     echo 'secret private key. The generated certificate should be used as a'
@@ -10,7 +10,7 @@ if [[ "$#" != 1 && "$#" != 2 || "$1" == "--help" ]]; then
     echo
     echo 'DAYS is the number of days of certificate validity (365 by default).'
     echo
-    echo 'Usage: sign-servercert CSR_FILEPATH [DAYS]'
+    echo 'Usage: sign-servercert CSR_FILEPATH CERTIFICATE_FILEPATH [DAYS]'
     exit 2
 fi
 
@@ -36,7 +36,7 @@ function get_dn_filed {
 find_script_dir || exit 3
 
 csr_file="$1"
-crt_file=$(echo "$csr_file" | sed s/\.csr$//).crt
+crt_file="$2"
 
 if [ -s "$crt_file" ]; then
     echo
@@ -66,7 +66,7 @@ openssl ca \
     -config "$DIR/db/root-ca.conf" \
     -in "$csr_file" \
     -out "$crt_file" \
-    -days "${2-365}" \
+    -days "${3-365}" \
     -extensions server_ext
 
 [ -s "$crt_file" ] || exit 3
