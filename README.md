@@ -48,7 +48,9 @@ generate-masterkey*  nodeinfo/            register-peer*  sign-servercert*
 * `root-ca.conf.template` contains configuration parameters for the OpenSSL
   library. This file is used only during the initial creation of the root-CA
   database.
-* `root-ca.crt` contains the self-signed certificate for your root-CA.
+* `root-ca.crt` contains the self-signed certificate for your root-CA. This
+  file should be copied to the servers of your Swaptacular node, to be used
+  as a trusted root CA during the SSL authentication phase.
 * `certs/` will contain the certificates that have been signed by your
   root-CA.
 * `db/` will contain all sorts of bookkeeping information about your
