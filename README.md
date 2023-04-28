@@ -145,22 +145,22 @@ that they can prove their identity before your servers.
 
 Before you can sign a peer certificate, first you will need to obtain the
 latest info-bundle file for the Swaptacular node that is about to become
-your peer. You can obtain the info-bundle file directly from the owner of
-the Swaptacular node, or indirectly through a third party. Obtaining the
+your peer. You can obtain this file directly from the owner of the
+Swaptacular node, or indirectly through a third party. Obtaining the
 info-bundle file through a third party is perfectly secure, because every
 file in the info-bundle is digitally signed.
 
 Once you have obtained the correct info-bundle file, run the `sign-peercert`
-command, specifying the path to the info-bundle file:
+command, specifying the path to the file:
 
 ```shell
 $ ./sign-peercert ~/other-swaptacular-node.zip
 ```
 
 You will be asked to enter the password for your private key. At the end, a
-signed peer certificate will be created for your peer. The certificate file
-will be created in the `peers` sub-directory. You will see something like
-this:
+signed peer certificate will be created. The certificate file will be
+created in a sub-directory of the `peers` directory. A message like this one
+will be appear:
 
 ```
 ***********************************************************************
