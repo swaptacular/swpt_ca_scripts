@@ -71,8 +71,8 @@ important changes, to commit those changes to your version control servers.
 
 ## Creating an info-bundle file
 
-Every Swaptacular network node should create an info-bundle file for itself.
-Info-bundle files are `.zip` archives that contain 4 files:
+Every Swaptacular network node should create an *info-bundle* file for
+itself. Info-bundle files are `.zip` archives that contain 4 files:
 
 1. The self-signed certificate for the node's root-CA (`root-ca.crt`).
 2. A certificate signing request (`root-ca.csr`).
@@ -187,11 +187,11 @@ centralized registry of accounting authority nodes.
 To finalize the process of registering a new peer, you need to receive a
 signed peer certificate from the peer. In addition, if you have not signed a
 peer certificate for this peer already, in order to do this, you will need
-to receive an info-bundle file from the peer as well.
+to receive an *info-bundle* file as well.
 
-After you have signed a peer certificate for the peer, run the
+**After you have signed a peer certificate for the peer**, run the
 `register-peer` command, specifying the path to the received peer
-certificate file:
+certificate file (in this example: "~/peercert.crt"):
 
 ```shell
 $ ./register-peer ~/peercert.crt
