@@ -123,7 +123,7 @@ steps:
 
 2. Then you use the certificate signing request generated in step 1, and
    your root-CA private key, to sign the server certificate. To do this, run
-   the `generate-serverkey` command, specifying the path to the certificate
+   the `sign-servercert` command, specifying the path to the certificate
    signing request file, followed by the path to the server certificate file
    that should be created:
 
