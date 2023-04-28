@@ -158,9 +158,9 @@ $ ./sign-peercert ~/other-swaptacular-node.zip
 ```
 
 You will be asked to enter the password for your private key. At the end, a
-signed peer certificate will be created. The certificate file will be
-created in a sub-directory of the `peers` directory. A message like this one
-will be appear:
+signed peer certificate file will be created. The file will be created in a
+sub-directory of the `peers` directory. A message like this one will be
+appear, to inform you what to do next:
 
 ```
 ***********************************************************************
