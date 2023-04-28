@@ -213,6 +213,6 @@ File location: /some-path/peers/fd75076e66e6bd5f8b7dee0e03bd51a0/sub-ca.crt
 ```
 
 At this point, the referred sub-directory of the "peers" directory (in this
-example: `/some-path/peers/fd75076e66e6bd5f8b7dee0e03bd51a0/`) contains all
+example: `/some-path/peers/fd75076e66e6bd5f8b7dee0e03bd51a0/`), contains all
 the necessary information for your servers to accept and initiate
-authenticated SSL connections from/to your peer.
+authenticated SSL connections from and to your peer.
