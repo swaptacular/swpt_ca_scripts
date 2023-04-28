@@ -162,7 +162,7 @@ signed peer certificate will be created for your peer. The certificate file
 will be created in the `peers` sub-directory. You will see something like
 this:
 
-```shell
+```
 ***********************************************************************
 * IMPORTANT: A peer certificate file has been created. You should     *
 *            send this file to the owner of the Swaptacular node that *
