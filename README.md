@@ -184,5 +184,30 @@ centralized registry of accounting authority nodes.
 
 ## Registering a peer
 
-TODO
+To finalize the process of registering a new peer, you need to receive a
+signed peer certificate from the peer. In addition, if you have not signed a
+peer certificate for this peer already, in order to do this, you will need
+to receive an info-bundle file from the peer as well.
 
+After you have signed a peer certificate for the peer, run the
+`register-peer` command, specifying the path to the received peer
+certificate file:
+
+```shell
+$ ./register-peer ~/peercert.crt
+```
+
+If everything is OK, a message like this will be appear, to inform you what
+to do next:
+
+```
+***********************************************************************
+* IMPORTANT: The peer certificate file has been verified and stored.  *
+*                                                                     *
+*            You should use this peer certificate as an intermediary  *
+*            certificate, together with your server's (leaf)          *
+*            certificate, to establish authenticated SSL connections  *
+*            with the peer node. See the "sign-servercert" command.   *
+***********************************************************************
+File location: /some-path/peers/fd75076e66e6bd5f8b7dee0e03bd51a0/sub-ca.crt
+```
