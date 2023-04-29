@@ -69,8 +69,8 @@ responsible for. For *debtors agent nodes*, after registering a peer, a
 `debtors-subnet.txt` file will be created, indicating the range of debtor
 IDs that the node is responsible for.
 
-As you may have guessed, the information contained in these files and
-directories **is very important** for the proper functioning of your
+As you may have guessed, **the information contained in these files and
+directories is very important** for the proper functioning of your
 Swaptacular node. Therefore, it is probably a good idea to use a version
 control system (like `git`), and each time you register a new peer, or make
 other important changes, to commit those changes to your version control
