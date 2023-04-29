@@ -72,18 +72,19 @@ IDs that the node is responsible for.
 As you may have guessed, the information contained in these files and
 directories **is very important** for the proper functioning of your
 Swaptacular node. Therefore, it is probably a good idea to use a version
-control system (like `git`), and each time you add a new peer, or make other
-important changes, to commit those changes to your version control servers.
+control system (like `git`), and each time you register a new peer, or make
+other important changes, to commit those changes to your version control
+servers.
 
 ## Creating an info-bundle file
 
 Every Swaptacular network node should create an *info-bundle* file for
 itself. Info-bundle files are `.zip` archives that contain 4 files:
 
-1. The self-signed certificate for the node's root-CA (`root-ca.crt`).
-2. A certificate signing request (`root-ca.csr`).
-3. The content of the node's "nodeinfo" directory (`nodeinfo.zip`).
-4. A digital signature for the "nodeinfo.zip" file (`nodeinfo.signature`).
+1. `root-ca.crt` — the self-signed certificate for the node's root-CA.
+2. `root-ca.csr` — a certificate signing request.
+3. `nodeinfo.zip` — the content of the node's "nodeinfo" directory.
+4. `nodeinfo.signature` — a digital signature for the "nodeinfo.zip" file.
 
 To create an info-bundle file for your node, use the `create-infobundle`
 command, specifying the path to the file that you want to be created (in
