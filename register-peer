@@ -10,7 +10,7 @@ if [[ "$#" != 1 || "$1" == "--help" ]]; then
     echo 'NOTE: If this command is executed for an already established peer,'
     echo '      it will only try to verify the passed certificate file.'
     echo
-    echo 'Usage: register-peer PEERCERT_FILE'
+    echo 'Usage: register-peer PEERCERT_FILEPATH'
     exit 2
 fi
 
