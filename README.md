@@ -191,7 +191,7 @@ will need to receive an *info-bundle* file as well.
 
 **After you have signed a peer certificate for the peer**, run the
 `register-peer` command, specifying the path to the peer certificate file
-that you received (in this example: "~/received-peercert.crt"):
+that you *received* (in this example: "~/received-peercert.crt"):
 
 ```shell
 $ ./register-peer ~/received-peercert.crt
@@ -212,11 +212,11 @@ to do next:
 File location: /some-path/peers/fd75076e66e6bd5f8b7dee0e03bd51a0/sub-ca.crt
 ```
 
-At this point, the referred sub-directory of the "peers" directory (in this
-example: `/some-path/peers/fd75076e66e6bd5f8b7dee0e03bd51a0/`), contains all
-the necessary information for your servers to accept and initiate
-authenticated SSL connections from and to your peer. For example, the
-sub-directory may contain something similar to this:
+At this point, the referred "peers" sub-directory (in this example:
+`/some-path/peers/fd75076e66e6bd5f8b7dee0e03bd51a0/`), contains all the
+necessary information for your servers to accept and initiate authenticated
+SSL connections from and to your peer. For example, the sub-directory may
+contain something similar to this:
 
 ```shell
 $ ls -F /some-path/peers/fd75076e66e6bd5f8b7dee0e03bd51a0
