@@ -62,6 +62,11 @@ generate-masterkey*  nodeinfo/            register-peer*  sign-servercert*
   necessary.
 * `peers/` will contain information about your peers, including the content
   of their "nodeinfo" directories.
+* For *creditors agent* nodes, a `creditors-subnet.txt` file will also be
+  created, indicating the range of creditor IDs that the node is responsible
+  for. For *debtors agent* nodes, after registering a peer, a
+  `debtors-subnet.txt` file will be created, indicating the range of debtor
+  IDs that the node is responsible for.
 
 As you may have guessed, the information contained in these files and
 directories **is very important** for the proper functioning of your
