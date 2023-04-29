@@ -190,11 +190,11 @@ signed a peer certificate for this peer already, in order to do this, you
 will need to receive an *info-bundle* file as well.
 
 **After you have signed a peer certificate for the peer**, run the
-`register-peer` command, specifying the path to the received peer
-certificate file (in this example: "~/peercert.crt"):
+`register-peer` command, specifying the path to the peer certificate file
+that you received (in this example: "~/received-peercert.crt"):
 
 ```shell
-$ ./register-peer ~/peercert.crt
+$ ./register-peer ~/received-peercert.crt
 ```
 
 If everything is OK, a message like this will be appear, to inform you what
