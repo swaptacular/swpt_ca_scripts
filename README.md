@@ -189,6 +189,11 @@ to inform you what to do next:
 File location: /some-path/peers/fd75076e66e6bd5f8b7dee0e03bd51a0/peercert.crt
 ```
 
+You can run the `sign-peercert` command for an already established peer as
+well. In this case it will not create a new certificate file, but if a newer
+version of the info-bundle file has been supplied, the peer's "nodeinfo"
+directory will be updated.
+
 **Important note:** Before signing a peer certificate to an *accounting
 authority node*, it is highly recommended to take the time to verify that
 the `serialNumber` stated in the certificate's "Subject", is indeed reserved
