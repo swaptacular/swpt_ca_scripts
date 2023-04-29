@@ -17,7 +17,7 @@ organizationalUnitName  = "$ORGANIZATIONAL_UNIT_NAME"
 serialNumber            = "$SERIAL_NUMBER"
 
 [ca_default]
-home                    = .
+home                    = $ENV::SWPT_CA_DIR
 database                = $home/db/index
 serial                  = $home/db/serial
 crlnumber               = $home/db/crlnumber

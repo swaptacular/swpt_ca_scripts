@@ -36,6 +36,7 @@ function find_script_dir {
         [[ $SOURCE != /* ]] && SOURCE=$DIR/$SOURCE
     done
     DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
+    export SWPT_CA_DIR="$DIR"
 }
 
 function generate_serial_numbber {
@@ -59,7 +60,7 @@ function generate_conf_file {
     export SERIAL_NUMBER=$(cat db/nodeid)
     envsubst '$ORGANIZATIONAL_UNIT_NAME $SERIAL_NUMBER' \
              < root-ca.conf.template \
-             > db/root-ca.conf
+             > root-ca.conf
 }
 
 function ask_for_aa_serial_numbber {
@@ -162,7 +163,7 @@ if [ ! -s db/nodetype -o ! -s db/nodeid ]; then
     done
 fi
 
-[ -s db/root-ca.conf ] || generate_conf_file
+[ -s root-ca.conf ] || generate_conf_file
 
 if [ ! -s nodeinfo/servers.txt ]; then
     echo
@@ -183,7 +184,7 @@ if [ ! -s root-ca.crt ]; then
     self_csr=$(mktemp)
     trap delete_self_csr EXIT
     openssl req -new \
-            -config db/root-ca.conf \
+            -config root-ca.conf \
             -out "$self_csr" \
             -key private/root-ca.key \
             -reqexts ca_ext
@@ -192,7 +193,7 @@ if [ ! -s root-ca.crt ]; then
     echo
     echo "A self-signed certificate must be created for your CA..."
     openssl ca -selfsign \
-            -config db/root-ca.conf \
+            -config root-ca.conf \
             -in "$self_csr" \
             -out root-ca.crt \
             -extensions ca_ext

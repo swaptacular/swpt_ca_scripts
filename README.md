@@ -39,15 +39,17 @@ command, your script directory will contain something similar to this:
 
 ``` shell
 $ ls -F
-certs/               generate-serverkey*  peers/          root-ca.conf.template
-create-infobundle*   init-ca*             private/        root-ca.crt
-db/                  LICENSE              README.md       sign-peercert*
-generate-masterkey*  nodeinfo/            register-peer*  sign-servercert*
+certs/               init-ca*   README.md              sign-peercert*
+create-infobundle*   LICENSE    register-peer*         sign-servercert*
+db/                  nodeinfo/  root-ca.conf
+generate-masterkey*  peers/     root-ca.conf.template
+generate-serverkey*  private/   root-ca.crt
 ```
 
-* `root-ca.conf.template` contains configuration parameters for the OpenSSL
-  library. This file is used only during the initial creation of the root-CA
-  database.
+* `root-ca.conf` contains configuration parameters for the OpenSSL library.
+* `root-ca.conf.template` contains a template for the "root-ca.conf" file.
+  This template file will be used only during the initial creation of the
+  root-CA database.
 * `root-ca.crt` contains the self-signed certificate for your root-CA. This
   file should be copied to the servers of your Swaptacular node, to be used
   as a trusted root CA during the SSL authentication phase.
@@ -115,10 +117,10 @@ steps:
    security, it is best to perform this step directly on the server, so that
    the private key never "leaves" the server on which it has been generated.
 
-   To do this, you **may** use the `generate-serverkey` command, specifying
-   the path to the public/private key pair file that should be created,
-   followed by the path to the certificate signing request file that should
-   be created:
+   To do this, you may use the `generate-serverkey` command, specifying the
+   path to the public/private key pair file that should be created, followed
+   by the path to the certificate signing request file that should be
+   created:
 
    ```shell
    $ ./generate-serverkey ~/myserver.key ~/myserver.csr
@@ -127,6 +129,10 @@ steps:
    An **unencrypted** public/private key pair file, and a certificate
    signing request file will be created for you. In this example, those
    would be `~/myserver.key` and `~/myserver.csr`.
+
+   Note that in order to be able to run "generate-serverkey" directly on the
+   server, you will have to copy to the server the `root-ca.conf` file as
+   well.
 
 2. Then you use the certificate signing request generated in step 1, and
    your root-CA private key, to sign the server certificate. To do this, run

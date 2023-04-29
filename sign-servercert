@@ -24,6 +24,7 @@ function find_script_dir {
         [[ $SOURCE != /* ]] && SOURCE=$DIR/$SOURCE
     done
     DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
+    export SWPT_CA_DIR="$DIR"
 }
 
 function get_dn_filed {
@@ -63,7 +64,7 @@ fi
 
 echo "Signing server certificate..."
 openssl ca \
-    -config "$DIR/db/root-ca.conf" \
+    -config "$DIR/root-ca.conf" \
     -in "$csr_file" \
     -out "$crt_file" \
     -days "${3-365}" \

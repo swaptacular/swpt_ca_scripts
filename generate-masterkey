@@ -20,6 +20,7 @@ function find_script_dir {
         [[ $SOURCE != /* ]] && SOURCE=$DIR/$SOURCE
     done
     DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
+    export SWPT_CA_DIR="$DIR"
 }
 
 find_script_dir || exit 3
