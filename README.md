@@ -39,15 +39,17 @@ command, your script directory will contain something similar to this:
 
 ``` shell
 $ ls -F
-certs/               generate-serverkey*  peers/          root-ca.conf.template
-create-infobundle*   init-ca*             private/        root-ca.crt
-db/                  LICENSE              README.md       sign-peercert*
-generate-masterkey*  nodeinfo/            register-peer*  sign-servercert*
+certs/               init-ca*   README.md              sign-peercert*
+create-infobundle*   LICENSE    register-peer*         sign-servercert*
+db/                  nodeinfo/  root-ca.conf
+generate-masterkey*  peers/     root-ca.conf.template
+generate-serverkey*  private/   root-ca.crt
 ```
 
-* `root-ca.conf.template` contains configuration parameters for the OpenSSL
-  library. This file is used only during the initial creation of the root-CA
-  database.
+* `root-ca.conf` contains configuration parameters for the OpenSSL library.
+* `root-ca.conf.template` contains a template for the "root-ca.conf" file.
+  This template file will be used only during the initial creation of the
+  root-CA database.
 * `root-ca.crt` contains the self-signed certificate for your root-CA. This
   file should be copied to the servers of your Swaptacular node, to be used
   as a trusted root CA during the SSL authentication phase.
@@ -115,10 +117,10 @@ steps:
    security, it is best to perform this step directly on the server, so that
    the private key never "leaves" the server on which it has been generated.
 
-   To do this, you **may** use the `generate-serverkey` command, specifying
-   the path to the public/private key pair file that should be created,
-   followed by the path to the certificate signing request file that should
-   be created:
+   To do this, you may use the `generate-serverkey` command, specifying the
+   path to the public/private key pair file that should be created, followed
+   by the path to the certificate signing request file that should be
+   created:
 
    ```shell
    $ ./generate-serverkey ~/myserver.key ~/myserver.csr
@@ -127,6 +129,10 @@ steps:
    An **unencrypted** public/private key pair file, and a certificate
    signing request file will be created for you. In this example, those
    would be `~/myserver.key` and `~/myserver.csr`.
+
+   Note that in order to be able to run "generate-serverkey" directly on the
+   server, you will have to copy to the server the `root-ca.conf` file as
+   well.
 
 2. Then you use the certificate signing request generated in step 1, and
    your root-CA private key, to sign the server certificate. To do this, run
@@ -150,9 +156,9 @@ steps:
 You should sign and give a peer certificate to each one of your peers, so
 that they can prove their identity before your servers.
 
-Before you can sign a peer certificate, first you will need to obtain the
-latest *info-bundle* file for the Swaptacular node that is about to become
-your peer. You can obtain this file directly from the owner of the node, or
+To sign a peer certificate, first you will need to obtain the latest
+*info-bundle* file for the Swaptacular node that is about to become your
+peer. You can obtain this file directly from the owner of the node, or
 indirectly through a third party. Obtaining the info-bundle file through a
 third party is perfectly safe, because every file in the info-bundle is
 digitally signed.
@@ -182,6 +188,11 @@ to inform you what to do next:
 ***********************************************************************
 File location: /some-path/peers/fd75076e66e6bd5f8b7dee0e03bd51a0/peercert.crt
 ```
+
+You can run the "sign-peercert"` command for an already established peer as
+well. In this case it will not create a new certificate file, but if a newer
+version of the peer's info-bundle file has been supplied, the peer's
+"nodeinfo" directory will be updated.
 
 **Important note:** Before signing a peer certificate to an *accounting
 authority node*, it is highly recommended to take the time to verify that

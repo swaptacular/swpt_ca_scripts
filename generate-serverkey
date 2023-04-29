@@ -19,6 +19,7 @@ function find_script_dir {
         [[ $SOURCE != /* ]] && SOURCE=$DIR/$SOURCE
     done
     DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
+    export SWPT_CA_DIR="$DIR"
 }
 
 find_script_dir || exit 3
@@ -43,7 +44,7 @@ fi
 openssl req \
     -new \
     -nodes \
-    -config "$DIR/db/root-ca.conf" \
+    -config "$DIR/root-ca.conf" \
     -out "$csr_file" \
     -keyout "$key_file" \
     -reqexts server_official_ext

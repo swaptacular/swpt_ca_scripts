@@ -11,6 +11,7 @@ function find_script_dir {
         [[ $SOURCE != /* ]] && SOURCE=$DIR/$SOURCE
     done
     DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
+    export SWPT_CA_DIR="$DIR"
 }
 
 function delete_temp_dir {
@@ -36,7 +37,7 @@ if [ ! -s "$DIR/db/root-ca.csr" ]; then
     echo 'created first.'
     echo
     openssl req -new \
-            -config "$DIR/db/root-ca.conf" \
+            -config "$DIR/root-ca.conf" \
             -out "$DIR/db/root-ca.csr" \
             -key "$DIR/private/root-ca.key" \
             -reqexts ca_official_ext
