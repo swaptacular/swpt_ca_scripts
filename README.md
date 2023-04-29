@@ -156,9 +156,9 @@ steps:
 You should sign and give a peer certificate to each one of your peers, so
 that they can prove their identity before your servers.
 
-Before you can sign a peer certificate, first you will need to obtain the
-latest *info-bundle* file for the Swaptacular node that is about to become
-your peer. You can obtain this file directly from the owner of the node, or
+To sign a peer certificate, first you will need to obtain the latest
+*info-bundle* file for the Swaptacular node that is about to become your
+peer. You can obtain this file directly from the owner of the node, or
 indirectly through a third party. Obtaining the info-bundle file through a
 third party is perfectly safe, because every file in the info-bundle is
 digitally signed.
@@ -189,10 +189,10 @@ to inform you what to do next:
 File location: /some-path/peers/fd75076e66e6bd5f8b7dee0e03bd51a0/peercert.crt
 ```
 
-You can run the `sign-peercert` command for an already established peer as
+You can run the "sign-peercert"` command for an already established peer as
 well. In this case it will not create a new certificate file, but if a newer
-version of the info-bundle file has been supplied, the peer's "nodeinfo"
-directory will be updated.
+version of the peer's info-bundle file has been supplied, the peer's
+"nodeinfo" directory will be updated.
 
 **Important note:** Before signing a peer certificate to an *accounting
 authority node*, it is highly recommended to take the time to verify that
