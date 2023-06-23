@@ -165,7 +165,7 @@ fi
 
 [ -s root-ca.conf ] || generate_conf_file
 
-if [ ! -s nodeinfo/servers.txt ]; then
+if [ ! -s nodeinfo/stomp.toml ]; then
     echo
     echo 'You must specify the network address of your server(s). The network'
     echo 'address consists of a domain name and a port number, separated by a'
@@ -175,7 +175,9 @@ if [ ! -s nodeinfo/servers.txt ]; then
     echo
     read -p 'Network address: ' server_address
     echo
-    echo "$server_address" > nodeinfo/servers.txt
+    echo "servers = [\"$server_address\"]" > nodeinfo/stomp.toml
+    echo 'host = "/"' >> nodeinfo/stomp.toml
+    echo 'destination = "/exchange/smp"' >> nodeinfo/stomp.toml
 fi
 
 if [ ! -s root-ca.crt ]; then
