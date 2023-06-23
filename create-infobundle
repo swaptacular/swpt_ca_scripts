@@ -55,7 +55,7 @@ if [ -s "$bundle_file" ]; then
 fi
 
 required_files=("$DIR/root-ca.crt" "$DIR/db/root-ca.csr")
-for file in ${required_files[@]} "$DIR/nodeinfo/servers.txt"; do
+for file in ${required_files[@]} "$DIR/nodeinfo/stomp.toml"; do
     if [ ! -f "$file" ]; then
         echo
         echo "ERROR: $file does not exist."
