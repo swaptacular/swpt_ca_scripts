@@ -174,10 +174,29 @@ if [ ! -s nodeinfo/stomp.toml ]; then
     echo 'be able to easily change later.'
     echo
     read -p 'Network address: ' server_address
+    case "$(cat db/nodetype)" in
+        "Creditors Agents")
+            stomp_destination='/exchange/creditors_in'
+            break
+            ;;
+        "Debtors Agents")
+            stomp_destination='/exchange/debtors_in'
+            break
+            ;;
+        "Accounting Authorities")
+            stomp_destination='/exchange/accounts_in'
+            break
+            ;;
+        *)
+            echo "ERROR: Invalid node type."
+            echo
+            exit 1
+            ;;
+    esac
     echo
     echo "servers = [\"$server_address\"]" > nodeinfo/stomp.toml
     echo 'host = "/"' >> nodeinfo/stomp.toml
-    echo 'destination = "/exchange/smp"' >> nodeinfo/stomp.toml
+    echo "destination = \"$stomp_destination\"" >> nodeinfo/stomp.toml
 fi
 
 if [ ! -s root-ca.crt ]; then
