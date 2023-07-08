@@ -190,6 +190,7 @@ function save_subnet {
 find_script_dir || exit 3
 
 temp_dir=$(mktemp -d)
+chmod a+x "$temp_dir"
 trap delete_temp_dir EXIT
 
 unzip "$1" -d "$temp_dir"
