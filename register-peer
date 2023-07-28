@@ -162,7 +162,7 @@ if [ -s "$peer_crt_file" ]; then
     fi
 else
     ns_comment_ext="$(openssl x509 -noout -ext nsComment -in "$crt_file")"
-    subnet="$(echo "$ns_comment_ext" | sed -nE 's/^.*\bSubnet: ([a-f0-9]{6,16})$/\1/p')"
+    subnet="$(echo "$ns_comment_ext" | sed -nE 's/^.*\bSubnet: *([a-f0-9]{6,16})$/\1/p')"
     case "$node_type" in
         "Creditors Agents")
             [[ -n "$subnet" ]] || invalid_certificate
