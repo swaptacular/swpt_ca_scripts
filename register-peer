@@ -136,6 +136,29 @@ function verify_enddate {
     fi
 }
 
+function create_peer_manifest_file {
+    root_cert="$(openssl x509 -in "$peer_dir/root-ca.crt" | sed  's/^/    /')"
+    sub_cert="$(openssl x509 -in "$crt_file" | sed  's/^/    /')"
+    stomp_config="$(cat "$peer_dir/nodeinfo/stomp.toml" || true)"
+    stomp_config="$(echo "$stomp_config" | sed  's/^/    /')"
+    cat > "$peer_dir/peer-manifest.yaml" <<EOF
+apiVersion: k8s.swaptacular.org/v1beta1
+kind: Peer
+metadata:
+  name: peer-$DN_SERIAL_NUMBER
+spec:
+  nodeID: $DN_SERIAL_NUMBER
+  nodeType: $DN_OU
+  subnet: $subnet
+  rootCert: |
+$root_cert
+  subCert: |
+$sub_cert
+  stompConfiguration: |
+$stomp_config
+EOF
+}
+
 find_script_dir || exit 3
 
 echo 'Verifying peer certificate...'
@@ -175,7 +198,13 @@ else
             echo "$subnet" | grep -E "^${DN_SERIAL_NUMBER}" || invalid_certificate
             echo "$subnet" > "$DIR/debtors-subnet.txt"
             ;;
+        "Accounting Authorities")
+            # Accounting authorities should ignore the nsComment
+            # because they are the ones who choose peers' subnets.
+            subnet="$(cat "$peer_dir/subnet.txt")"
+            ;;
     esac
+    create_peer_manifest_file
     cp "$crt_file" "$peer_crt_file"
 fi
 

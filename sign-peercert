@@ -187,6 +187,45 @@ function save_subnet {
     esac
 }
 
+function update_peer_manifest_file {
+    echo "Updating peer manifest file..."
+    case "$(cat "$DIR/db/nodetype")" in
+        "Creditors Agents")
+            subnet_file="$peer_dir/masq-subnet.txt"
+            ;;
+        "Debtors Agents")
+            subnet_file="$DIR/debtors-subnet.txt"
+            ;;
+        "Accounting Authorities")
+            subnet_file="$peer_dir/subnet.txt"
+            ;;
+        *)
+            invalid_node_type
+            ;;
+    esac
+    subnet="$(cat "$subnet_file")"
+    root_cert="$(openssl x509 -in "$peer_dir/root-ca.crt" | sed  's/^/    /')"
+    sub_cert="$(openssl x509 -in "$peer_dir/sub-ca.crt" | sed  's/^/    /')"
+    stomp_config="$(cat "$peer_dir/nodeinfo/stomp.toml" || true)"
+    stomp_config="$(echo "$stomp_config" | sed  's/^/    /')"
+    cat > "$peer_dir/peer-manifest.yaml" <<EOF
+apiVersion: k8s.swaptacular.org/v1beta1
+kind: Peer
+metadata:
+  name: peer-$DN_SERIAL_NUMBER
+spec:
+  nodeID: $DN_SERIAL_NUMBER
+  nodeType: $DN_OU
+  subnet: $subnet
+  rootCert: |
+$root_cert
+  subCert: |
+$sub_cert
+  stompConfiguration: |
+$stomp_config
+EOF
+}
+
 find_script_dir || exit 3
 
 temp_dir=$(mktemp -d)
@@ -230,6 +269,9 @@ if [[ -d "$peer_dir" ]]; then
                 echo 'Updating nodeinfo...'
                 rm -rf "$peer_dir/nodeinfo"
                 cp -r "$temp_dir/nodeinfo" "$peer_dir"
+                if [ -s "$peer_dir/sub-ca.crt" ]; then
+                    update_peer_manifest_file
+                fi
             fi
         fi
     else

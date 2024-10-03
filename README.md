@@ -248,3 +248,5 @@ nodeinfo/  nodetype.txt  peercert.crt  root-ca.crt  sub-ca.crt  subnet.txt
 * `sub-ca.crt` contains the peer certificate that the peer signed for you.
 * `subnet.txt` (or `masq-subnet.txt`) contains information about the range
   of debtor/creditor IDs that are allocated to/by the peer.
+* `peer-manifest.yaml` contains a Kubernetes manifest describing the
+  peer.
