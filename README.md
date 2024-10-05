@@ -262,7 +262,7 @@ we registered in the previous section, running:
 $ ./reconfigure-peer fd75076e66e6bd5f8b7dee0e03bd51a0 3
 ```
 
-Will increase the number of sending queues for that peer to 3. If for
+will increase the number of sending queues for that peer to 3. If for
 some reason you want to deactivate this peer, run:
 
 ```shell
