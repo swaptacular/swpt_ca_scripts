@@ -206,10 +206,11 @@ function update_peer_manifest_file {
     subnet="$(cat "$subnet_file")"
     root_cert="$(openssl x509 -in "$peer_dir/root-ca.crt" | sed  's/^/    /')"
     sub_cert="$(openssl x509 -in "$peer_dir/sub-ca.crt" | sed  's/^/    /')"
+    queues="$(cat $peer_dir/queues.txt)"
     stomp_config="$(cat "$peer_dir/nodeinfo/stomp.toml" || true)"
     stomp_config="$(echo "$stomp_config" | sed  's/^/    /')"
     cat > "$peer_dir/peer-manifest.yaml" <<EOF
-apiVersion: k8s.swaptacular.org/v1beta1
+apiVersion: k8s.swaptacular.org/v1
 kind: Peer
 metadata:
   name: peer-$DN_SERIAL_NUMBER
@@ -217,6 +218,7 @@ spec:
   nodeID: $DN_SERIAL_NUMBER
   nodeType: $DN_OU
   subnet: $subnet
+  queues: $queues
   rootCert: |
 $root_cert
   subCert: |
@@ -269,7 +271,7 @@ if [[ -d "$peer_dir" ]]; then
                 echo 'Updating nodeinfo...'
                 rm -rf "$peer_dir/nodeinfo"
                 cp -r "$temp_dir/nodeinfo" "$peer_dir"
-                if [ -s "$peer_dir/sub-ca.crt" ]; then
+                if [ -s "$peer_dir/sub-ca.crt" -a ! -e "$peer_dir/DEACTIVATED" ]; then
                     update_peer_manifest_file
                 fi
             fi
@@ -289,6 +291,7 @@ fi
 if [ ! -s "$peercert_file" ]; then
     temp_peercert_file="$temp_dir/$peercert_filename"
     echo "$DN_OU" > "$temp_dir/nodetype.txt"
+    echo 1 >> "$temp_dir/queues.txt"
     temp_subnet_file="$temp_dir/subnet.txt"
     save_subnet "$temp_subnet_file"
     if [ -s "$temp_subnet_file" ]; then

@@ -248,5 +248,22 @@ nodeinfo/  nodetype.txt  peercert.crt  root-ca.crt  sub-ca.crt  subnet.txt
 * `sub-ca.crt` contains the peer certificate that the peer signed for you.
 * `subnet.txt` (or `masq-subnet.txt`) contains information about the range
   of debtor/creditor IDs that are allocated to/by the peer.
+* `queues.txt` contains the designated number of sending queues.
 * `peer-manifest.yaml` contains a Kubernetes manifest describing the
   peer.
+
+## Reconfiguring a registered peer
+
+To increase the number of sending queues for a registered peer, you
+can use the "reconfigure-peer" command. For example, to increase the
+number of sending queues to 3, run:
+
+```shell
+$ ./reconfigure-peer fd75076e66e6bd5f8b7dee0e03bd51a0 3
+```
+
+To deactivate a registered peer, run:
+
+```shell
+$ ./reconfigure-peer fd75076e66e6bd5f8b7dee0e03bd51a0 --deactivate
+```
