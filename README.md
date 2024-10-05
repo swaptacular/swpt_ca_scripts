@@ -255,14 +255,15 @@ nodeinfo/  nodetype.txt  peercert.crt  root-ca.crt  sub-ca.crt  subnet.txt
 ## Reconfiguring a registered peer
 
 To increase the number of sending queues for a registered peer, you
-can use the "reconfigure-peer" command. For example, to increase the
-number of sending queues to 3, run:
+can use the "reconfigure-peer" command. For example, for the peer that
+we registered in the previous section, running:
 
 ```shell
 $ ./reconfigure-peer fd75076e66e6bd5f8b7dee0e03bd51a0 3
 ```
 
-To deactivate a registered peer, run:
+Will increase the number of sending queues for that peer to 3. If for
+some reason you want to deactivate this peer, run:
 
 ```shell
 $ ./reconfigure-peer fd75076e66e6bd5f8b7dee0e03bd51a0 --deactivate
