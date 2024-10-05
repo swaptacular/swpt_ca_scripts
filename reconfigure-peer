@@ -114,6 +114,6 @@ echo
 echo '***********************************************************************'
 echo "* IMPORTANT: Peer's configuration files have been updated. Note       *"
 echo '*            that for the new configuration to take effect, it        *'
-echo '*            need to be applied to your servers.                      *'
+echo '*            has to be applied to your servers.                       *'
 echo '***********************************************************************'
 echo "Peer directory: $peer_dir/"
