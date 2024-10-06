@@ -203,6 +203,11 @@ function update_peer_manifest_file {
             invalid_node_type
             ;;
     esac
+    if [ -e "$peer_dir/DEACTIVATED" ]; then
+        deactivated=true
+    else
+        deactivated=false
+    fi
     subnet="$(cat "$subnet_file")"
     root_cert="$(openssl x509 -in "$peer_dir/root-ca.crt" | sed  's/^/    /')"
     sub_cert="$(openssl x509 -in "$peer_dir/sub-ca.crt" | sed  's/^/    /')"
@@ -219,6 +224,7 @@ spec:
   nodeType: $DN_OU
   subnet: $subnet
   queues: $queues
+  deactivated: $deactivated
   rootCert: |
 $root_cert
   subCert: |
@@ -271,7 +277,7 @@ if [[ -d "$peer_dir" ]]; then
                 echo 'Updating nodeinfo...'
                 rm -rf "$peer_dir/nodeinfo"
                 cp -r "$temp_dir/nodeinfo" "$peer_dir"
-                if [ -s "$peer_dir/sub-ca.crt" -a ! -e "$peer_dir/DEACTIVATED" ]; then
+                if [ -s "$peer_dir/sub-ca.crt" ]; then
                     update_peer_manifest_file
                 fi
             fi

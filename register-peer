@@ -153,6 +153,7 @@ spec:
   nodeType: $DN_OU
   subnet: $subnet
   queues: $queues
+  deactivated: false
   rootCert: |
 $root_cert
   subCert: |

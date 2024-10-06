@@ -244,7 +244,7 @@ nodetype.txt  peer-manifest.yaml  root-ca.crt  subnet.txt
 
 * `nodeinfo/` contains information about the peer's node.
 * `peercert.crt` contains the peer certificate that you signed.
-* `queues.txt` contains the designated number of sending queues.
+* `queues.txt` contains the number of sending queues.
 * `sub-ca.crt` contains the peer certificate that the peer signed for
   you.
 * `nodetype.txt` indicates the type the peer's node.
@@ -259,18 +259,17 @@ nodetype.txt  peer-manifest.yaml  root-ca.crt  subnet.txt
 
 ## Reconfiguring a registered peer
 
-To increase the designated number of sending queues for a registered
-peer (by default it is `1`), you can use the "reconfigure-peer"
-command. For example, for the peer that we registered in the previous
-section, running:
+To increase the number of sending queues for a registered peer (by
+default it is `1`), you can use the "reconfigure-peer" command. For
+example, for the peer that we registered in the previous section,
+running:
 
 ```shell
 $ ./reconfigure-peer fd75076e66e6bd5f8b7dee0e03bd51a0 3
 ```
 
-would increase the designated number of sending queues for that peer
-to `3`. It is important to note that you are not allowed to decrease
-this number.
+would increase the number of sending queues for that peer to `3`. It
+is important to note that you are not allowed to decrease this number.
 
 If for some reason you want to deactivate the given peer, you can run:
 
