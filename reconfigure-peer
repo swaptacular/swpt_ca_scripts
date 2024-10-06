@@ -105,7 +105,7 @@ if [ -s "$peer_crt_file" ]; then
     update_peer_manifest_file
 else
     echo
-    echo "ERROR: No registered peer with node ID $1."
+    echo "ERROR: There is no registered peer with ID $1."
     echo
     exit 1
 fi
