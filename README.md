@@ -243,15 +243,17 @@ nodetype.txt  peer-manifest.yaml  root-ca.crt  subnet.txt
 ```
 
 * `nodeinfo/` contains information about the peer's node.
-* `nodetype.txt` indicates the type the peer's node.
 * `peercert.crt` contains the peer certificate that you signed.
-* `root-ca.crt` contains the self-signed certificate for the peer's root-CA.
-* `sub-ca.crt` contains the peer certificate that the peer signed for you.
-* `subnet.txt` (or `masq-subnet.txt`) contains information about the range
-  of debtor/creditor IDs that are allocated to/by the peer.
 * `queues.txt` contains the designated number of sending queues.
+* `sub-ca.crt` contains the peer certificate that the peer signed for
+  you.
+* `nodetype.txt` indicates the type the peer's node.
 * `peer-manifest.yaml` contains a Kubernetes manifest describing the
   peer.
+* `root-ca.crt` contains the self-signed certificate for the peer's
+  root-CA.
+* `subnet.txt` (or `masq-subnet.txt`) contains information about the
+  range of debtor/creditor IDs that are allocated to/by the peer.
 * `DEACTIVATED` if this file exists, this indicates that the peer has
   been deactivated.
 
