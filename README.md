@@ -238,13 +238,44 @@ contain something similar to this:
 
 ```shell
 $ ls -F /some-path/peers/fd75076e66e6bd5f8b7dee0e03bd51a0
-nodeinfo/  nodetype.txt  peercert.crt  root-ca.crt  sub-ca.crt  subnet.txt
+nodeinfo/     peercert.crt        queues.txt   sub-ca.crt
+nodetype.txt  peer-manifest.yaml  root-ca.crt  subnet.txt
 ```
 
 * `nodeinfo/` contains information about the peer's node.
-* `nodetype.txt` indicates the type the peer's node.
 * `peercert.crt` contains the peer certificate that you signed.
-* `root-ca.crt` contains the self-signed certificate for the peer's root-CA.
-* `sub-ca.crt` contains the peer certificate that the peer signed for you.
-* `subnet.txt` (or `masq-subnet.txt`) contains information about the range
-  of debtor/creditor IDs that are allocated to/by the peer.
+* `queues.txt` contains the number of sending queues.
+* `sub-ca.crt` contains the peer certificate that the peer signed for
+  you.
+* `nodetype.txt` indicates the type the peer's node.
+* `peer-manifest.yaml` contains a Kubernetes manifest describing the
+  peer.
+* `root-ca.crt` contains the self-signed certificate for the peer's
+  root-CA.
+* `subnet.txt` (or `masq-subnet.txt`) contains information about the
+  range of debtor/creditor IDs that are allocated to/by the peer.
+* `DEACTIVATED` if this file exists, this indicates that the peer has
+  been deactivated.
+
+## Reconfiguring a registered peer
+
+To increase the number of sending queues for a registered peer (the
+default is `1`), you can use the "reconfigure-peer" command. For
+example, for the peer that we registered in the previous section,
+running:
+
+```shell
+$ ./reconfigure-peer fd75076e66e6bd5f8b7dee0e03bd51a0 3
+```
+
+would increase the number of sending queues for that peer to `3`. Note
+that you are not allowed to decrease this number.
+
+If you want to deactivate this peer, you can run:
+
+```shell
+$ ./reconfigure-peer fd75076e66e6bd5f8b7dee0e03bd51a0 --deactivate
+```
+
+**Important note:** Once a peer has been deactivated, it can not be
+re-activated again.
