@@ -94,7 +94,7 @@ if [ -s "$peer_crt_file" ]; then
         if ! (echo "$new_value" | grep -E '^[1-9][0-9]{0,1}$' > /dev/null); then
             new_value=0
         fi
-        if [[ "$old_value" > "$new_value" ]]; then
+        if [ "$old_value" -gt "$new_value" ]; then
             echo
             echo "ERROR: Invalid number of queues. The number of queues"
             echo "       must be between $old_value and 99."
