@@ -238,7 +238,8 @@ contain something similar to this:
 
 ```shell
 $ ls -F /some-path/peers/fd75076e66e6bd5f8b7dee0e03bd51a0
-nodeinfo/  nodetype.txt  peercert.crt  root-ca.crt  sub-ca.crt  subnet.txt
+nodeinfo/     peercert.crt        queues.txt   sub-ca.crt
+nodetype.txt  peer-manifest.yaml  root-ca.crt  subnet.txt
 ```
 
 * `nodeinfo/` contains information about the peer's node.
@@ -251,20 +252,28 @@ nodeinfo/  nodetype.txt  peercert.crt  root-ca.crt  sub-ca.crt  subnet.txt
 * `queues.txt` contains the designated number of sending queues.
 * `peer-manifest.yaml` contains a Kubernetes manifest describing the
   peer.
+* `DEACTIVATED` if this file exists, this indicates that the peer has
+  been deactivated.
 
 ## Reconfiguring a registered peer
 
-To increase the number of sending queues for a registered peer, you
-can use the "reconfigure-peer" command. For example, for the peer that
-we registered in the previous section, running:
+To increase the designated number of sending queues for a registered
+peer (by default it is `1`), you can use the "reconfigure-peer"
+command. For example, for the peer that we registered in the previous
+section, running:
 
 ```shell
 $ ./reconfigure-peer fd75076e66e6bd5f8b7dee0e03bd51a0 3
 ```
 
-will increase the number of sending queues for that peer to 3. If for
-some reason you want to deactivate this peer, run:
+will increase the designated number of sending queues for that peer
+to 3. It is important to note that you are not allowed to decrease
+this number.
+
+If for some reason you want to deactivate the given peer, run:
 
 ```shell
 $ ./reconfigure-peer fd75076e66e6bd5f8b7dee0e03bd51a0 --deactivate
 ```
+
+Once a peer has been deactivated, it can not be re-activated again.
