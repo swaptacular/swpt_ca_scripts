@@ -271,7 +271,7 @@ $ ./reconfigure-peer fd75076e66e6bd5f8b7dee0e03bd51a0 3
 would increase the number of sending queues for that peer to `3`. Note
 that you are not allowed to decrease this number.
 
-If you want to deactivate the given peer, you can run:
+If you want to deactivate this peer, you can run:
 
 ```shell
 $ ./reconfigure-peer fd75076e66e6bd5f8b7dee0e03bd51a0 --deactivate
