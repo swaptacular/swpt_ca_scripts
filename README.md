@@ -259,8 +259,8 @@ nodetype.txt  peer-manifest.yaml  root-ca.crt  subnet.txt
 
 ## Reconfiguring a registered peer
 
-To increase the number of sending queues for a registered peer (by
-default it is `1`), you can use the "reconfigure-peer" command. For
+To increase the number of sending queues for a registered peer (the
+default is `1`), you can use the "reconfigure-peer" command. For
 example, for the peer that we registered in the previous section,
 running:
 
@@ -268,13 +268,14 @@ running:
 $ ./reconfigure-peer fd75076e66e6bd5f8b7dee0e03bd51a0 3
 ```
 
-would increase the number of sending queues for that peer to `3`. It
-is important to note that you are not allowed to decrease this number.
+would increase the number of sending queues for that peer to `3`. Note
+that you are not allowed to decrease this number.
 
-If for some reason you want to deactivate the given peer, you can run:
+If you want to deactivate the given peer, you can run:
 
 ```shell
 $ ./reconfigure-peer fd75076e66e6bd5f8b7dee0e03bd51a0 --deactivate
 ```
 
-Once a peer has been deactivated, it can not be re-activated again.
+**Important note:** Once a peer has been deactivated, it can not be
+re-activated again.
