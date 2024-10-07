@@ -46,7 +46,7 @@ function update_peer_manifest_file {
             invalid_node_type
             ;;
     esac
-    if [ -e "$peer_dir/DEACTIVATED" ]; then
+    if [ -e "$deactivation_marker" ]; then
         deactivated=true
     else
         deactivated=false
@@ -86,9 +86,12 @@ peer_crt_file="$peer_dir/sub-ca.crt"
 new_value="$2"
 
 if [ -s "$peer_crt_file" ]; then
+    deactivation_marker="$peer_dir/DEACTIVATED"
     if [[ "$new_value" == "--deactivate" ]]; then
-        echo "Deactivating peer $1..."
-        touch "$peer_dir/DEACTIVATED"
+        if [ ! -e "$deactivation_marker" ]; then
+            echo "Deactivating peer $1..."
+            date -I > "$deactivation_marker"
+        fi
     else
         old_value="$(cat "$peer_dir/queues.txt")"
         if [ "$old_value" -le "$new_value" -a "$new_value" -le 99 ]; then

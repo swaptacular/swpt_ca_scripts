@@ -255,7 +255,7 @@ nodetype.txt  peer-manifest.yaml  root-ca.crt  subnet.txt
 * `subnet.txt` (or `masq-subnet.txt`) contains information about the
   range of debtor/creditor IDs that are allocated to/by the peer.
 * `DEACTIVATED` if this file exists, this indicates that the peer has
-  been deactivated.
+  been deactivated. The file contains the deactivation date.
 
 ## Reconfiguring a registered peer
 
