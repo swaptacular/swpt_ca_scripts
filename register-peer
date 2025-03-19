@@ -137,30 +137,12 @@ function verify_enddate {
     fi
 }
 
-function create_peer_manifest_file {
-    root_cert="$(openssl x509 -in "$peer_dir/root-ca.crt" | sed  's/^/    /')"
-    sub_cert="$(openssl x509 -in "$crt_file" | sed  's/^/    /')"
-    queues="$(cat $peer_dir/queues.txt)"
-    stomp_config="$(cat "$peer_dir/nodeinfo/stomp.toml" || true)"
-    stomp_config="$(echo "$stomp_config" | sed  's/^/    /')"
-    cat > "$peer_dir/peer-manifest.yaml" <<EOF
-apiVersion: k8s.swaptacular.org/v1
-kind: Peer
-metadata:
-  name: peer-$DN_SERIAL_NUMBER
-spec:
-  nodeID: $DN_SERIAL_NUMBER
-  nodeType: $DN_OU
-  subnet: $subnet
-  queues: $queues
-  deactivated: false
-  rootCert: |
-$root_cert
-  subCert: |
-$sub_cert
-  stompConfiguration: |
-$stomp_config
-EOF
+function create_peer_manifest {
+    if [ -x "$DIR/peers/create-peer-manifest" ]; then
+        pushd "$DIR/peers" > /dev/null
+        ./create-peer-manifest "$DN_SERIAL_NUMBER"
+        popd > /dev/null
+    fi
 }
 
 find_script_dir || exit 3
@@ -208,7 +190,7 @@ else
             subnet="$(cat "$peer_dir/subnet.txt")"
             ;;
     esac
-    create_peer_manifest_file
+    create_peer_manifest
     cp "$crt_file" "$peer_crt_file"
 fi
 

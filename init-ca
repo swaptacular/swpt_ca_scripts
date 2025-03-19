@@ -122,7 +122,8 @@ if [ ! -s "$key_file" ]; then
 fi
 
 cd "$DIR"
-mkdir certs db nodeinfo peers 2> /dev/null || true
+mkdir certs db nodeinfo 2> /dev/null || true
+mkdir peers 2> /dev/null || true
 touch db/index
 [ -s db/serial ] || openssl rand -hex 16  > db/serial
 [ -s db/crlnumber ] || echo 1001 > db/crlnumber
