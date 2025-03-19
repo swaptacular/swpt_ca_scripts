@@ -238,8 +238,8 @@ contain something similar to this:
 
 ```shell
 $ ls -F /some-path/peers/fd75076e66e6bd5f8b7dee0e03bd51a0
-nodeinfo/     peercert.crt        queues.txt   sub-ca.crt
-nodetype.txt  peer-manifest.yaml  root-ca.crt  subnet.txt
+nodeinfo/     peercert.crt  queues.txt   sub-ca.crt
+nodetype.txt  root-ca.crt   subnet.txt
 ```
 
 * `nodeinfo/` contains information about the peer's node.
@@ -248,14 +248,20 @@ nodetype.txt  peer-manifest.yaml  root-ca.crt  subnet.txt
 * `sub-ca.crt` contains the peer certificate that the peer signed for
   you.
 * `nodetype.txt` indicates the type the peer's node.
-* `peer-manifest.yaml` contains a Kubernetes manifest describing the
-  peer.
 * `root-ca.crt` contains the self-signed certificate for the peer's
   root-CA.
 * `subnet.txt` (or `masq-subnet.txt`) contains information about the
   range of debtor/creditor IDs that are allocated to/by the peer.
 * `DEACTIVATED` if this file exists, this indicates that the peer has
   been deactivated. The file contains the deactivation date.
+
+**Important note:** If you have not deleted the
+`peers/create-peer-manifest` file (which is optional), a bunch of YAML
+files will also be automatically created in the peer's sub-directory.
+These are [Kustomize](http://kustomize.io) files for Kubernetes
+deployments. Also, the new peer will be added to the
+`peers/kustomization.yaml` peers aggregator file, which will be
+automatically created if it does not exist already.
 
 ## Reconfiguring a registered peer
 
