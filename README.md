@@ -1,8 +1,8 @@
 # Scripts for managing Swaptacular certificate authorities
 
-This repository contains shell scripts that Swaptacular network nodes
-can use to maintain a trusted certificate authority (*root-CA*). The
-way this works [is explained
+This repository contains shell scripts that [Swaptacular] network
+nodes can use to maintain a trusted certificate authority (*root-CA*).
+The way this works [is explained
 here](http://swaptacular.github.io/2023/04/26/under-the-hood-peer-connections/).
 The scripts should work on any contemporary GNU system, on which
 `bash` is installed, along with `openssl`, `zip`, `unzip`, `envsubst`,
@@ -285,3 +285,6 @@ $ ./reconfigure-peer fd75076e66e6bd5f8b7dee0e03bd51a0 --deactivate
 
 **Important note:** Once a peer has been deactivated, it can not be
 re-activated again.
+
+
+[Swaptacular]: https://swaptacular.github.io/overview
