@@ -217,7 +217,14 @@ export DN_SERIAL_NUMBER=$(get_dn_filed serialNumber "$DN")
 [[ "$DN_O" == "Swaptacular Nodes Registry" ]] || invalid_certificate
 [[ -n "$DN_OU" ]] || invalid_node_type
 [[ "$DN_SERIAL_NUMBER" != "$(cat "$DIR/db/nodeid")" ]] || invalid_node_type
-echo "$DN_SERIAL_NUMBER" | grep -E '[a-f0-9]+' > /dev/null || invalid_node_type
+# NOTE: The serial number is used below as a directory name (under
+# "peers/"), so it must be validated strictly. The regexp is anchored
+# with "^...$" to reject any value that is not entirely lowercase
+# hexadecimal (as mandated by the Swaptacular certificate spec).
+# Without the anchors, a value containing path separators (for example
+# "a/../../etc") would pass, and later be used to write outside the
+# "peers/" directory.
+echo "$DN_SERIAL_NUMBER" | grep -E '^[a-f0-9]+$' > /dev/null || invalid_node_type
 
 mkdir "$DIR/peers" 2> /dev/null || true
 peer_dir="$DIR/peers/$DN_SERIAL_NUMBER"
